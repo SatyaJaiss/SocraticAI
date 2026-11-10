@@ -1,0 +1,68 @@
+"""Pydantic schemas and enums for domain models and API contracts."""
+
+from __future__ import annotations
+
+from app.schemas.domain import (
+    AnswerSubmission,
+    ChatRequest,
+    ChatResponse,
+    ConceptScore,
+    DashboardSummary,
+    DocumentRecord,
+    EvaluationResult,
+    Explanation,
+    LessonPlan,
+    MemoryFact,
+    ProgressPoint,
+    Quiz,
+    QuizQuestion,
+    QuizSubmission,
+    RAGContext,
+    Recommendation,
+    RetrievedChunk,
+    StudentProfile,
+)
+from app.schemas.enums import (
+    DEMOTE_THRESHOLD,
+    PROMOTE_THRESHOLD,
+    ChatIntent,
+    DifficultyLevel,
+    DocumentStatus,
+    LearningSpeed,
+    LearningStyle,
+    MemoryFactType,
+    QuestionType,
+    StudentLevel,
+)
+
+__all__ = [
+    "DEMOTE_THRESHOLD",
+    "PROMOTE_THRESHOLD",
+    "AnswerSubmission",
+    "ChatIntent",
+    "ChatRequest",
+    "ChatResponse",
+    "ConceptScore",
+    "DashboardSummary",
+    "DifficultyLevel",
+    "DocumentRecord",
+    "DocumentStatus",
+    "EvaluationResult",
+    "Explanation",
+    "LearningSpeed",
+    "LearningStyle",
+    "LessonPlan",
+    "MemoryFact",
+    "MemoryFactType",
+    "ProgressPoint",
+    "QuestionType",
+    "Quiz",
+    "QuizQuestion",
+    "QuizSubmission",
+    "RAGContext",
+    "Recommendation",
+    "RetrievedChunk",
+    "StudentLevel",
+    "StudentProfile",
+]
+

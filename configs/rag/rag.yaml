@@ -1,0 +1,16 @@
+# RAG System Configuration & Baseline Tunables
+
+embedding:
+  default_model: all-MiniLM-L6-v2
+  vector_dimension: 384
+  metric: cosine
+
+chunking:
+  chunk_size_tokens: 600
+  chunk_overlap_tokens: 100
+  max_chunks_per_document: 2000
+
+retrieval:
+  top_k: 4
+  search_type: similarity
+

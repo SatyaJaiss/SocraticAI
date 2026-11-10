@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    container_name: socraticai-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_NAME=SocraticAI
+      - APP_ENVIRONMENT=production
+      - APP_HOST=0.0.0.0
+      - APP_PORT=8000
+      - LLM_PROVIDER=demo
+      - DATABASE_URL=sqlite:///./data/socraticai.db
+      - VECTOR_PERSIST_DIRECTORY=./data/chroma
+      - API_UPLOAD_DIR=./data/uploads
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import urllib.request; urllib.request.urlopen(\"http://localhost:8000/api/v1/health\")'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+    container_name: socraticai-frontend
+    ports:
+      - "8501:8501"
+    environment:
+      - FRONTEND_API_BASE_URL=http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+

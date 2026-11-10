@@ -1,0 +1,27 @@
+# Agent System Defaults & Tunables
+
+planner:
+  default_intent: general
+  temperature: 0.2
+
+teacher:
+  lesson_format: structured
+  default_difficulty: beginner
+
+quiz:
+  mcq_count: 5
+  numerical_count: 2
+  subjective_count: 1
+  total_questions: 8
+
+evaluation:
+  numerical_tolerance: 1e-6
+  subjective_threshold: 0.6
+
+memory:
+  max_facts_per_turn: 6
+  default_importance: 0.5
+
+recommendation:
+  max_daily_plan_items: 4
+
