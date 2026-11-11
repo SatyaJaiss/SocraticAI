@@ -17,43 +17,48 @@ class TestHealth:
 
 
 class TestStudents:
-    def test_get_creates(self, client):
-        resp = client.get("/api/v1/students/api_s1")
+    def test_get_creates(self, client, auth_header):
+        resp = client.get("/api/v1/students/api_s1", headers=auth_header("api_s1"))
         assert resp.status_code == 200
         data = resp.json()
         assert data["student_id"] == "api_s1"
         assert data["name"] == "Learner"
 
-    def test_put_updates(self, client):
+    def test_put_updates(self, client, auth_header):
         resp = client.put(
             "/api/v1/students/api_s2",
             json={"name": "Linus", "level": "intermediate"},
+            headers=auth_header("api_s2"),
         )
         assert resp.status_code == 200
         assert resp.json()["name"] == "Linus"
         assert resp.json()["level"] == "intermediate"
 
-    def test_put_partial_update(self, client):
-        client.put("/api/v1/students/api_s3", json={"name": "Grace"})
-        resp = client.get("/api/v1/students/api_s3")
+    def test_put_partial_update(self, client, auth_header):
+        client.put(
+            "/api/v1/students/api_s3",
+            json={"name": "Grace"},
+            headers=auth_header("api_s3"),
+        )
+        resp = client.get("/api/v1/students/api_s3", headers=auth_header("api_s3"))
         assert resp.json()["name"] == "Grace"
         assert resp.json()["level"] == "beginner"  # unchanged
 
 
 class TestQuizzes:
-    def test_list_empty(self, client):
-        resp = client.get("/api/v1/quizzes/quizless")
+    def test_list_empty(self, client, auth_header):
+        resp = client.get("/api/v1/quizzes/quizless", headers=auth_header("quizless"))
         assert resp.status_code == 200
         assert resp.json()["quiz_ids"] == []
 
-    def test_get_missing(self, client):
-        resp = client.get("/api/v1/quiz/ghost")
+    def test_get_missing(self, client, auth_header):
+        resp = client.get("/api/v1/quiz/ghost", headers=auth_header("any_student"))
         assert resp.status_code == 404
 
 
 class TestDashboard:
-    def test_dashboard_for_new_student(self, client):
-        resp = client.get("/api/v1/dashboard/dash_s1")
+    def test_dashboard_for_new_student(self, client, auth_header):
+        resp = client.get("/api/v1/dashboard/dash_s1", headers=auth_header("dash_s1"))
         assert resp.status_code == 200
         data = resp.json()
         assert data["student_id"] == "dash_s1"
@@ -64,10 +69,11 @@ class TestDashboard:
 
 
 class TestChat:
-    async def test_chat_learn(self, client):
+    async def test_chat_learn(self, client, auth_header):
         resp = client.post(
             "/api/v1/chat",
             json={"student_id": "chat_s1", "message": "teach me about gravity", "topic": "gravity"},
+            headers=auth_header("chat_s1"),
         )
         assert resp.status_code == 200
         data = resp.json()
@@ -76,7 +82,7 @@ class TestChat:
         assert data["messages"]
         assert data["lesson"]
 
-    async def test_chat_with_quiz_flag(self, client):
+    async def test_chat_with_quiz_flag(self, client, auth_header):
         resp = client.post(
             "/api/v1/chat",
             json={
@@ -85,6 +91,7 @@ class TestChat:
                 "topic": "photosynthesis",
                 "with_quiz": True,
             },
+            headers=auth_header("chat_s2"),
         )
         assert resp.status_code == 200
         data = resp.json()
@@ -100,16 +107,28 @@ class TestSubmitQuiz:
             difficulty=DifficultyLevel.BEGINNER,
             questions=[
                 QuizQuestion(
-                    id="q1", type=QuestionType.MCQ, topic="Geometry",
-                    question="Area of circle = ?", options=["pi*r^2", "2*pi*r"], correct_answer="pi*r^2",
+                    id="q1",
+                    type=QuestionType.MCQ,
+                    topic="Geometry",
+                    question="Area of circle = ?",
+                    options=["pi*r^2", "2*pi*r"],
+                    correct_answer="pi*r^2",
                 ),
                 QuizQuestion(
-                    id="q2", type=QuestionType.NUMERICAL, topic="Geometry",
-                    question="3 * 4 = ?", options=[], correct_answer="12",
+                    id="q2",
+                    type=QuestionType.NUMERICAL,
+                    topic="Geometry",
+                    question="3 * 4 = ?",
+                    options=[],
+                    correct_answer="12",
                 ),
                 QuizQuestion(
-                    id="q3", type=QuestionType.SUBJECTIVE, topic="Geometry",
-                    question="What is a triangle?", options=[], correct_answer="A polygon with 3 sides.",
+                    id="q3",
+                    type=QuestionType.SUBJECTIVE,
+                    topic="Geometry",
+                    question="What is a triangle?",
+                    options=[],
+                    correct_answer="A polygon with 3 sides.",
                 ),
             ],
         )
@@ -121,7 +140,7 @@ class TestSubmitQuiz:
         # Use the repo-reconstructed quiz id so evaluation can load it.
         return container.quiz_repo.get_quiz(quiz.id) or quiz
 
-    async def test_submit_and_receive_evaluation(self, client):
+    async def test_submit_and_receive_evaluation(self, client, auth_header):
         quiz = self._create_quiz(client, "sub_s1")
         resp = client.post(
             "/api/v1/chat/submit-quiz",
@@ -134,6 +153,7 @@ class TestSubmitQuiz:
                     {"question_id": f"{quiz.id}q3", "answer": "It has 3 sides."},
                 ],
             },
+            headers=auth_header("sub_s1"),
         )
         assert resp.status_code == 200
         data = resp.json()

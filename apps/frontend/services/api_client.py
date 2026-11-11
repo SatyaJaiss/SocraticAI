@@ -24,7 +24,12 @@ EduAgentClientError = SocraticAIClientError
 class SocraticAIClient:
     """HTTP client wrapping the SocraticAI API."""
 
-    def __init__(self, base_url: str | None = None, timeout: float = 120.0) -> None:
+    def __init__(
+        self,
+        base_url: str | None = None,
+        timeout: float = 120.0,
+        token: str | None = None,
+    ) -> None:
         try:
             from app.core.config import get_settings
 
@@ -33,7 +38,16 @@ class SocraticAIClient:
             configured_url = os.getenv("FRONTEND_API_BASE_URL", "http://localhost:8000")
 
         self.base_url = (base_url or configured_url).rstrip("/")
+        self._token: str | None = token
         self._client = httpx.Client(base_url=self.base_url, timeout=timeout)
+
+    def set_token(self, token: str | None) -> None:
+        """Set or clear the active Bearer authentication token."""
+        self._token = token
+
+    @property
+    def token(self) -> str | None:
+        return self._token
 
     def close(self) -> None:
         self._client.close()
@@ -41,16 +55,22 @@ class SocraticAIClient:
     # ------------------------------------------------------------- helpers --
     def _request(self, method: str, path: str, **kwargs: Any) -> Any:
         url = f"{self.base_url}{path}"
+        headers = dict(kwargs.pop("headers", None) or {})
+        if self._token:
+            headers["Authorization"] = f"Bearer {self._token}"
+
         try:
-            response = self._client.request(method, url, **kwargs)
+            response = self._client.request(method, url, headers=headers, **kwargs)
         except httpx.HTTPError as exc:
             raise SocraticAIClientError(
                 f"Cannot reach the SocraticAI API at {url!r}: {exc}"
             ) from exc
+
         try:
             payload = response.json()
         except ValueError:
             payload = None
+
         if response.is_error:
             message = ""
             if isinstance(payload, dict):
@@ -65,6 +85,53 @@ class SocraticAIClient:
     def health(self) -> dict:
         return self._request("GET", "/health") or {}
 
+    # ---------------------------------------------------------------- auth --
+    def register(
+        self, student_id: str, password: str, name: str = "Learner"
+    ) -> dict:
+        data = self._request(
+            "POST",
+            "/api/v1/auth/register",
+            json={"student_id": student_id, "password": password, "name": name},
+        )
+        if isinstance(data, dict) and "access_token" in data:
+            self._token = data["access_token"]
+        return data
+
+    def login(self, student_id: str, password: str) -> dict:
+        data = self._request(
+            "POST",
+            "/api/v1/auth/login",
+            json={"student_id": student_id, "password": password},
+        )
+        if isinstance(data, dict) and "access_token" in data:
+            self._token = data["access_token"]
+        return data
+
+    def me(self) -> dict:
+        return self._request("GET", "/api/v1/auth/me")
+
+    # ------------------------------------------------------- conversations --
+    def create_conversation(self, title: str = "Tutoring Session") -> dict:
+        return self._request("POST", "/api/v1/conversations", json={"title": title})
+
+    def list_conversations(self, limit: int = 50) -> list[dict]:
+        return self._request("GET", f"/api/v1/conversations?limit={limit}") or []
+
+    def get_conversation_messages(
+        self, conversation_id: str, limit: int = 100
+    ) -> list[dict]:
+        return (
+            self._request(
+                "GET",
+                f"/api/v1/conversations/{conversation_id}/messages?limit={limit}",
+            )
+            or []
+        )
+
+    def delete_conversation(self, conversation_id: str) -> dict:
+        return self._request("DELETE", f"/api/v1/conversations/{conversation_id}")
+
     # ---------------------------------------------------------------- chat --
     def chat(
         self,
@@ -72,6 +139,7 @@ class SocraticAIClient:
         message: str,
         topic: str | None = None,
         with_quiz: bool = False,
+        conversation_id: str | None = None,
     ) -> dict:
         return self._request(
             "POST",
@@ -81,6 +149,7 @@ class SocraticAIClient:
                 "message": message,
                 "topic": topic,
                 "with_quiz": with_quiz,
+                "conversation_id": conversation_id,
             },
         )
 
@@ -135,5 +204,3 @@ class SocraticAIClient:
 
 # Backward-compatibility alias
 EduAgentClient = SocraticAIClient
-
-

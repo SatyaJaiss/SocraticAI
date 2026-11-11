@@ -27,6 +27,7 @@ class Student(Base):
 
     id: Mapped[str] = mapped_column(String(64), primary_key=True)
     name: Mapped[str] = mapped_column(String(128), default="Learner")
+    password_hash: Mapped[str | None] = mapped_column(String(256), nullable=True)
     level: Mapped[str] = mapped_column(String(32), default="beginner")
     learning_style: Mapped[str] = mapped_column(String(32), default="reading_writing")
     learning_speed: Mapped[str] = mapped_column(String(32), default="normal")
@@ -125,13 +126,26 @@ class QuizAttempt(Base):
     created_at: Mapped[str] = mapped_column(String(32))
 
 
+class ConversationSession(Base):
+    """A distinct conversation thread belonging to a student."""
+
+    __tablename__ = "conversation_sessions"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    student_id: Mapped[str] = mapped_column(ForeignKey("students.id"), index=True)
+    title: Mapped[str] = mapped_column(String(256), default="Tutoring Session")
+    created_at: Mapped[str] = mapped_column(String(32))
+    updated_at: Mapped[str] = mapped_column(String(32))
+
+
 class Conversation(Base):
     """One message in a student conversation transcript."""
 
     __tablename__ = "conversations"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    student_id: Mapped[str] = mapped_column(ForeignKey("students.id"))
+    student_id: Mapped[str] = mapped_column(ForeignKey("students.id"), index=True)
+    conversation_id: Mapped[str] = mapped_column(String(64), index=True, default="")
     role: Mapped[str] = mapped_column(String(16))
     content: Mapped[Text] = mapped_column(Text)
     metadata_json: Mapped[dict] = mapped_column(JSON, default=dict)

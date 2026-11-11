@@ -23,10 +23,13 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Startup: ensure DB schema exists. Shutdown: release connection pools."""
+    """Startup: ensure DB schema exists and pre-compile workflows. Shutdown: release pools."""
     container = get_container()
     if container.settings.database.create_on_startup:
         container.db.create_schema()
+    # Pre-compile LangGraph workflows once during startup
+    _ = container.tutoring_graph
+    _ = container.evaluation_graph
     logger.info("SocraticAI API ready (LLM provider=%s)", container.settings.llm.provider)
     yield
     container.dispose()

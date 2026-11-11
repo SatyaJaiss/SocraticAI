@@ -83,3 +83,19 @@ def client(container):
     app.dependency_overrides[get_container_dep] = lambda: container
     app.dependency_overrides[get_ctx] = container.context
     return TestClient(app)
+
+
+@pytest.fixture
+def auth_header(container):
+    """Factory fixture returning an Authorization header dict for any student_id."""
+    from app.core.security import create_access_token
+
+    def _make_header(student_id: str = "test_student", name: str = "Learner") -> dict[str, str]:
+        container.student_repo.get_or_create(student_id, name=name)
+        token = create_access_token(
+            subject=student_id,
+            secret_key=container.settings.auth.secret_key,
+        )
+        return {"Authorization": f"Bearer {token}"}
+
+    return _make_header

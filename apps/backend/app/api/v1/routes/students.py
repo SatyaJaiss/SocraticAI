@@ -5,7 +5,8 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
-from app.core.dependencies import get_container_dep
+from app.core.dependencies import get_container_dep, get_current_student
+from app.core.exceptions import AuthorizationError
 from app.schemas.domain import StudentProfile
 from app.services.container import Container
 
@@ -34,11 +35,23 @@ def _to_response(profile: StudentProfile) -> dict:
     }
 
 
+@router.get("/me")
+async def get_my_profile(
+    current_student: StudentProfile = Depends(get_current_student),
+) -> dict:
+    """Get current authenticated student profile."""
+    return _to_response(current_student)
+
+
 @router.get("/{student_id}")
 async def get_student(
-    student_id: str, container: Container = Depends(get_container_dep)
+    student_id: str,
+    current_student: StudentProfile = Depends(get_current_student),
+    container: Container = Depends(get_container_dep),
 ) -> dict:
-    """Get (or lazily create) a student profile."""
+    """Get authenticated student profile (validating authorization)."""
+    if student_id != current_student.student_id:
+        raise AuthorizationError("Access denied: You cannot access another student's profile")
     profile = container.student_repo.get_or_create(student_id)
     return _to_response(profile)
 
@@ -47,9 +60,12 @@ async def get_student(
 async def update_student(
     student_id: str,
     update: StudentProfileUpdate,
+    current_student: StudentProfile = Depends(get_current_student),
     container: Container = Depends(get_container_dep),
 ) -> dict:
-    """Update editable profile fields."""
+    """Update editable profile fields for the authenticated student."""
+    if student_id != current_student.student_id:
+        raise AuthorizationError("Access denied: You cannot modify another student's profile")
     container.student_repo.get_or_create(student_id)
     updates = {k: v for k, v in update.model_dump().items() if v is not None}
     profile = container.student_repo.update_profile(student_id, **updates)

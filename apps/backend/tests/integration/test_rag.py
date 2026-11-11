@@ -53,7 +53,9 @@ class TestRAGAgent:
 
     async def test_with_topic_queries_store(self, ctx):
         ctx.rag.ingest_chunks(
-            "doc_z", [{"text": "Rockets use Newton's third law.", "page": 1, "source": "space.txt"}]
+            "doc_z",
+            [{"text": "Rockets use Newton's third law.", "page": 1, "source": "space.txt"}],
+            student_id="s1",
         )
         agent = RAGAgent(ctx)
         out = await agent.run({"student_id": "s1", "topic": "rockets newton"})

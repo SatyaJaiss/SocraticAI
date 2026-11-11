@@ -53,6 +53,27 @@ class Container:
         self.llm = build_llm_client(self.settings.llm)
         self.rag = RAGService(self.settings.vector_store)
 
+        self._tutoring_graph = None
+        self._evaluation_graph = None
+
+    @property
+    def tutoring_graph(self):
+        """Return the pre-compiled tutoring workflow graph singleton."""
+        if self._tutoring_graph is None:
+            from app.graphs.tutoring.workflow import build_tutoring_graph
+
+            self._tutoring_graph = build_tutoring_graph(self.context())
+        return self._tutoring_graph
+
+    @property
+    def evaluation_graph(self):
+        """Return the pre-compiled quiz evaluation workflow graph singleton."""
+        if self._evaluation_graph is None:
+            from app.graphs.evaluation.workflow import build_evaluation_graph
+
+            self._evaluation_graph = build_evaluation_graph(self.context())
+        return self._evaluation_graph
+
     def context(self) -> AgentContext:
         """Return the :class:`AgentContext` handed to every agent node."""
         return AgentContext(
@@ -69,7 +90,9 @@ class Container:
         )
 
     def dispose(self) -> None:
-        """Release DB connection pools (called at shutdown / in tests)."""
+        """Release DB connection pools and cached graphs (called at shutdown / in tests)."""
+        self._tutoring_graph = None
+        self._evaluation_graph = None
         self.db.dispose()
 
 

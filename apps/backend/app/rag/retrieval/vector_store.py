@@ -53,8 +53,9 @@ class VectorStore:
         chunks: list[dict],
         *,
         source: str,
+        student_id: str = "",
     ) -> int:
-        """Embed and store all chunks for one document.
+        """Embed and store all chunks for one document with student-level isolation.
 
         ``chunks`` is the list produced by
         :func:`services.rag.chunking.chunk_document_pages` (each a
@@ -73,6 +74,7 @@ class VectorStore:
         metadatas = [
             {
                 "doc_id": doc_id,
+                "student_id": student_id,
                 "source": c.get("source", source),
                 "page": int(c["page"]) if c.get("page") is not None else None,
             }
@@ -91,12 +93,27 @@ class VectorStore:
             documents=texts,
             metadatas=metadatas,
         )
-        logger.info("Stored %d chunks for document %s", len(chunks), doc_id)
+        logger.info(
+            "Stored %d chunks for document %s (student=%s)",
+            len(chunks),
+            doc_id,
+            student_id or "unassigned",
+        )
         return len(chunks)
 
     # ------------------------------------------------------------ search --
-    def search(self, query: str, top_k: int | None = None) -> list[RetrievedChunk]:
-        """Semantic search over the collection, returning ranked chunks."""
+    def search(
+        self,
+        query: str,
+        top_k: int | None = None,
+        *,
+        student_id: str | None = None,
+    ) -> list[RetrievedChunk]:
+        """Semantic search over the collection, returning ranked chunks.
+
+        When ``student_id`` is supplied, chunks are strictly filtered to ensure
+        student data isolation.
+        """
         if self._collection.count() == 0:
             return []
         top_k = top_k or self._settings.top_k
@@ -105,12 +122,16 @@ class VectorStore:
         except Exception as exc:
             raise RetrievalError(f"Query embedding failed: {exc}") from exc
 
+        query_kwargs: dict = {
+            "query_embeddings": [query_vector],
+            "n_results": top_k,
+            "include": ["documents", "metadatas", "distances"],
+        }
+        if student_id:
+            query_kwargs["where"] = {"student_id": student_id}
+
         try:
-            result = self._collection.query(
-                query_embeddings=[query_vector],
-                n_results=top_k,
-                include=["documents", "metadatas", "distances"],
-            )
+            result = self._collection.query(**query_kwargs)
         except Exception as exc:
             raise RetrievalError(f"Vector search failed: {exc}") from exc
 

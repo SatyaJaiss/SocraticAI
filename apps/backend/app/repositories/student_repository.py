@@ -6,7 +6,8 @@ from typing import Any
 
 from sqlalchemy import select
 
-from app.core.exceptions import ResourceNotFoundError
+from app.core.exceptions import ResourceNotFoundError, ValidationError
+from app.core.security import hash_password, verify_password
 from app.models.orm import ConceptScoreRow, Student, Topic
 from app.repositories.base_repository import BaseRepository
 from app.schemas.domain import ConceptScore, StudentProfile
@@ -24,12 +25,14 @@ class StudentRepository(BaseRepository):
         student_id: str,
         name: str = "Learner",
         level: str = StudentLevel.BEGINNER.value,
+        password_hash: str | None = None,
     ) -> StudentProfile:
         now = utc_now_iso()
         student = Student(
             id=student_id,
             name=name,
             level=level,
+            password_hash=password_hash,
             created_at=now,
             updated_at=now,
         )
@@ -37,6 +40,41 @@ class StudentRepository(BaseRepository):
             session.add(student)
             session.flush()
         return self._to_profile(student)
+
+    def register(
+        self,
+        *,
+        student_id: str,
+        password: str,
+        name: str = "Learner",
+        level: str = StudentLevel.BEGINNER.value,
+    ) -> StudentProfile:
+        """Register a new student with a securely hashed password."""
+        existing = self.get(student_id)
+        if existing is not None:
+            raise ValidationError(f"Student with ID {student_id!r} already exists")
+
+        hashed = hash_password(password)
+        return self.create(
+            student_id=student_id,
+            name=name,
+            level=level,
+            password_hash=hashed,
+        )
+
+    def authenticate(
+        self,
+        student_id: str,
+        password: str,
+    ) -> StudentProfile | None:
+        """Authenticate student credentials against stored password hash."""
+        with self.session() as session:
+            student = session.get(Student, student_id)
+            if student is None or not student.password_hash:
+                return None
+            if not verify_password(password, student.password_hash):
+                return None
+            return self._to_profile(student)
 
     def get_or_create(self, student_id: str, name: str = "Learner") -> StudentProfile:
         existing = self.get(student_id)

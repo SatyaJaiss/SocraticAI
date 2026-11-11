@@ -20,13 +20,14 @@ class RAGAgent:
     async def run(self, state: dict) -> dict:
         """Run a semantic search and store the context for downstream nodes."""
         query = (state.get("topic") or state.get("user_input") or "").strip()
+        student_id = state.get("student_id")
         if not query:
             return {
                 "rag_context": {"retrieved_chunks": [], "used": False},
                 "rag_sources": [],
             }
 
-        context = self._ctx.rag.build_context(query)
+        context = self._ctx.rag.build_context(query, student_id=student_id)
         sources = list(dict.fromkeys(c.source for c in context.retrieved_chunks))
         logger.info(
             "RAG retrieved %d chunk(s) for %r (sources: %s)",

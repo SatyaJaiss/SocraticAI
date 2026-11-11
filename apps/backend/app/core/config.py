@@ -155,6 +155,19 @@ class ApiSettings(BaseSettings):
     prefix: str = "/api/v1"
     upload_dir: str = "./data/uploads"
     pagination_default_size: int = 20
+    max_upload_size_bytes: int = 25 * 1024 * 1024  # 25 MB
+
+
+class AuthSettings(BaseSettings):
+    """Authentication and JWT token configuration."""
+
+    model_config = SettingsConfigDict(
+        env_prefix="AUTH_", extra="ignore", env_file=_ENV_FILE
+    )
+
+    secret_key: str = "socraticai-dev-insecure-secret-key-32b-min!!"
+    algorithm: str = "HS256"
+    access_token_expire_minutes: int = 60 * 24  # 24 hours
 
 
 class LoggingSettings(BaseSettings):
@@ -196,6 +209,7 @@ class Settings(BaseSettings):
     database: DatabaseSettings = Field(default_factory=DatabaseSettings)
     vector_store: VectorStoreSettings = Field(default_factory=VectorStoreSettings)
     api: ApiSettings = Field(default_factory=ApiSettings)
+    auth: AuthSettings = Field(default_factory=AuthSettings)
     logging: LoggingSettings = Field(default_factory=LoggingSettings)
     frontend: FrontendSettings = Field(default_factory=FrontendSettings)
     prompts_dir: Path = Field(default_factory=lambda: _PROJECT_ROOT / "configs" / "prompts")

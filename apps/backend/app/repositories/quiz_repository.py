@@ -78,6 +78,12 @@ class QuizRepository(BaseRepository):
                 ],
             )
 
+    def get_quiz_owner(self, quiz_id: str) -> str | None:
+        """Return the student_id that owns this quiz, or None if not found."""
+        with self.session() as session:
+            header = session.get(Quiz, quiz_id)
+            return header.student_id if header else None
+
     def list_quizzes(self, student_id: str, limit: int = 20) -> list[str]:
         """Return quiz ids for a student, newest first."""
         with self.session() as session:

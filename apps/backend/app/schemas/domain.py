@@ -211,6 +211,63 @@ class DashboardSummary(BaseModel):
 
 
 # --------------------------------------------------------------------------- #
+# Auth contracts
+# --------------------------------------------------------------------------- #
+class UserRegisterRequest(BaseModel):
+    """Payload for POST /api/v1/auth/register."""
+
+    student_id: str = Field(min_length=3, max_length=64, pattern=r"^[a-zA-Z0-9_\-\.]+$")
+    password: str = Field(min_length=6, max_length=128)
+    name: str = Field(default="Learner", min_length=1, max_length=128)
+
+
+class UserLoginRequest(BaseModel):
+    """Payload for POST /api/v1/auth/login."""
+
+    student_id: str = Field(min_length=1, max_length=64)
+    password: str = Field(min_length=1, max_length=128)
+
+
+class TokenResponse(BaseModel):
+    """Response returned upon successful registration or authentication."""
+
+    access_token: str
+    token_type: str = "bearer"
+    student: StudentProfile
+
+
+# --------------------------------------------------------------------------- #
+# Conversation Session contracts
+# --------------------------------------------------------------------------- #
+class ConversationSessionCreate(BaseModel):
+    """Payload for creating a new named session."""
+
+    title: str = Field(default="Tutoring Session", max_length=256)
+
+
+class ConversationSessionView(BaseModel):
+    """Public representation of a conversation thread."""
+
+    id: str
+    student_id: str
+    title: str
+    created_at: str
+    updated_at: str
+
+
+class ConversationMessageView(BaseModel):
+    """Public representation of an individual message in a thread."""
+
+    id: int
+    student_id: str
+    conversation_id: str
+    role: str
+    content: str
+    metadata: dict = Field(default_factory=dict)
+    created_at: str
+
+
+# --------------------------------------------------------------------------- #
 # API contracts
 # --------------------------------------------------------------------------- #
 class ChatRequest(BaseModel):
@@ -220,12 +277,14 @@ class ChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=8000)
     topic: str | None = None
     with_quiz: bool = False
+    conversation_id: str | None = None
 
 
 class ChatResponse(BaseModel):
     """Full result of a tutoring run (post-recommendation)."""
 
     student_id: str
+    conversation_id: str = ""
     intent: str
     topic: str
     lesson: Explanation | None = None

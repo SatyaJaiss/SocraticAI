@@ -76,13 +76,27 @@ class MemoryAgent:
             logger.debug("Stored memory fact [%s]: %s", fact.fact_type.value, fact.content)
 
         # Persist the conversation transcript (only for real user turns).
-        if user_input:
-            self._ctx.conversation_repo.add_message(student_id, "user", user_input)
+        conversation_id = state.get("conversation_id") or ""
+        if user_input and not state.get("user_message_persisted"):
+            self._ctx.conversation_repo.add_message(
+                student_id,
+                "user",
+                user_input,
+                conversation_id=conversation_id,
+            )
         for message in state.get("messages") or []:
-            if message.get("role") == "assistant" and message.get("content"):
+            if (
+                message.get("role") == "assistant"
+                and message.get("content")
+                and not message.get("persisted")
+            ):
                 self._ctx.conversation_repo.add_message(
-                    student_id, "assistant", message["content"]
+                    student_id,
+                    "assistant",
+                    message["content"],
+                    conversation_id=conversation_id,
                 )
+                message["persisted"] = True
 
         logger.info("Memory agent stored %d fact(s) for student %s", len(payload), student_id)
         return {"memory_updates": payload}

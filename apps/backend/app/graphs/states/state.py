@@ -20,6 +20,7 @@ class SocraticAIState(TypedDict, total=False):
 
     # --- Turn context --------------------------------------------------------
     student_id: str
+    conversation_id: str
     user_input: str
     topic: str | None
     with_quiz: bool

@@ -93,6 +93,34 @@ class ResourceNotFoundError(SocraticAIError):
     code = "NOT_FOUND"
 
 
+class AuthenticationError(SocraticAIError):
+    """Missing, invalid or expired authentication credentials."""
+
+    status_code = 401
+    code = "AUTHENTICATION_ERROR"
+
+
+class AuthorizationError(SocraticAIError):
+    """Authenticated caller does not have permission to access this resource."""
+
+    status_code = 403
+    code = "AUTHORIZATION_ERROR"
+
+
+class PayloadTooLargeError(SocraticAIError):
+    """Uploaded content exceeds maximum permitted size."""
+
+    status_code = 413
+    code = "PAYLOAD_TOO_LARGE"
+
+
+class UnsupportedMediaTypeError(SocraticAIError):
+    """Uploaded file type or MIME type is not supported."""
+
+    status_code = 415
+    code = "UNSUPPORTED_MEDIA_TYPE"
+
+
 class ValidationError(SocraticAIError):
     """Input payload failed domain validation."""
 
@@ -108,8 +136,13 @@ def register_exception_handlers(app: FastAPI) -> None:
     async def socraticai_error_handler(
         request: Request, exc: SocraticAIError
     ) -> JSONResponse:
+        headers = {}
+        if isinstance(exc, AuthenticationError):
+            headers["WWW-Authenticate"] = "Bearer"
+
         return JSONResponse(
             status_code=exc.status_code,
+            headers=headers if headers else None,
             content={
                 "error": exc.code,
                 "message": str(exc.message),

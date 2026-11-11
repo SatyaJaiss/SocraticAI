@@ -4,17 +4,33 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends
 
-from app.core.dependencies import get_container_dep
+from app.core.dependencies import get_container_dep, get_current_student
+from app.core.exceptions import AuthorizationError
+from app.schemas.domain import StudentProfile
 from app.services.container import Container
 
 router = APIRouter(prefix="/api/v1/dashboard", tags=["dashboard"])
 
 
+@router.get("/me")
+async def get_my_dashboard(
+    current_student: StudentProfile = Depends(get_current_student),
+    container: Container = Depends(get_container_dep),
+) -> dict:
+    """Get dashboard summary for current authenticated student."""
+    return await get_dashboard(current_student.student_id, current_student, container)
+
+
 @router.get("/{student_id}")
 async def get_dashboard(
-    student_id: str, container: Container = Depends(get_container_dep)
+    student_id: str,
+    current_student: StudentProfile = Depends(get_current_student),
+    container: Container = Depends(get_container_dep),
 ) -> dict:
-    """Get a summary dashboard for the student."""
+    """Get a summary dashboard for the authenticated student."""
+    if student_id != current_student.student_id:
+        raise AuthorizationError("Access denied: You cannot view another student's dashboard")
+
     profile = container.student_repo.get_or_create(student_id)
     attempts = container.quiz_repo.list_attempts(student_id, limit=50)
     memory_facts = container.memory_repo.list_facts(student_id, limit=10)
