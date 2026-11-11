@@ -12,11 +12,15 @@ Design rationale
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING
 
 from app.core.config import VectorStoreSettings
 from app.core.exceptions import RetrievalError
 from app.rag.embeddings.provider import EmbeddingProvider, get_embedding_provider
 from app.schemas.domain import RetrievedChunk
+
+if TYPE_CHECKING:
+    from app.cache.manager import CacheManager
 
 logger = logging.getLogger(__name__)
 
@@ -28,9 +32,11 @@ class VectorStore:
         self,
         settings: VectorStoreSettings,
         embedder: EmbeddingProvider | None = None,
+        cache_manager: CacheManager | None = None,
     ) -> None:
         self._settings = settings
         self._embedder = embedder or get_embedding_provider(settings)
+        self._cache = cache_manager
         try:
             import chromadb
         except ImportError as exc:  # pragma: no cover - dependency guaranteed
@@ -45,6 +51,26 @@ class VectorStore:
             settings.collection_name,
             settings.persist_directory,
         )
+
+    def _embed(self, texts: list[str]) -> list[list[float]]:
+        """Embed texts with transparent caching."""
+        if not texts:
+            return []
+        if not self._cache:
+            return self._embedder.embed_texts(texts)
+
+        model_name = getattr(self._embedder, "name", "default")
+        results: list[list[float] | None] = [
+            self._cache.get_embedding(model_name, t) for t in texts
+        ]
+        missing_indices = [i for i, r in enumerate(results) if r is None]
+        if missing_indices:
+            missing_texts = [texts[i] for i in missing_indices]
+            computed = self._embedder.embed_texts(missing_texts)
+            for idx, vec in zip(missing_indices, computed, strict=False):
+                results[idx] = vec
+                self._cache.set_embedding(model_name, texts[idx], vec)
+        return [r for r in results if r is not None]
 
     # ------------------------------------------------------------- ingest --
     def add_document(
@@ -66,7 +92,7 @@ class VectorStore:
             return 0
         texts = [c["text"] for c in chunks]
         try:
-            vectors = self._embedder.embed_texts(texts)
+            vectors = self._embed(texts)
         except Exception as exc:
             raise RetrievalError(f"Embedding failed for {doc_id}: {exc}") from exc
 
@@ -118,7 +144,7 @@ class VectorStore:
             return []
         top_k = top_k or self._settings.top_k
         try:
-            query_vector = self._embedder.embed_texts([query])[0]
+            query_vector = self._embed([query])[0]
         except Exception as exc:
             raise RetrievalError(f"Query embedding failed: {exc}") from exc
 

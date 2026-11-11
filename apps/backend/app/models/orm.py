@@ -206,3 +206,36 @@ class ProgressSnapshot(Base):
     score: Mapped[float] = mapped_column(Float, default=0.0)
     created_at: Mapped[str] = mapped_column(String(32))
 
+
+class EpisodicMemoryRow(Base):
+    """Cross-session narrative memory of a student learning event or conversation."""
+
+    __tablename__ = "episodic_memories"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    student_id: Mapped[str] = mapped_column(ForeignKey("students.id"), index=True)
+    session_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    topic: Mapped[str] = mapped_column(String(256), default="")
+    summary: Mapped[str] = mapped_column(Text)
+    event_type: Mapped[str] = mapped_column(String(64), default="conversation_summary")
+    provenance: Mapped[dict] = mapped_column(JSON, default=dict)
+    created_at: Mapped[str] = mapped_column(String(32))
+
+
+class StudentMisconception(Base):
+    """Structured tracking of identified conceptual errors and their resolution status."""
+
+    __tablename__ = "student_misconceptions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    student_id: Mapped[str] = mapped_column(ForeignKey("students.id"), index=True)
+    concept: Mapped[str] = mapped_column(String(256), index=True)
+    description: Mapped[str] = mapped_column(Text)
+    severity: Mapped[str] = mapped_column(String(32), default="medium")
+    status: Mapped[str] = mapped_column(String(32), default="active")
+    confidence: Mapped[float] = mapped_column(Float, default=0.8)
+    provenance: Mapped[dict] = mapped_column(JSON, default=dict)
+    created_at: Mapped[str] = mapped_column(String(32))
+    resolved_at: Mapped[str | None] = mapped_column(String(32), nullable=True)
+
+

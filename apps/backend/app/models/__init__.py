@@ -7,6 +7,7 @@ from app.models.orm import (
     ConceptScoreRow,
     Conversation,
     Document,
+    EpisodicMemoryRow,
     Lesson,
     MemoryEntry,
     ProgressSnapshot,
@@ -15,6 +16,7 @@ from app.models.orm import (
     QuizQuestion,
     Recommendation,
     Student,
+    StudentMisconception,
     Topic,
 )
 
@@ -23,6 +25,7 @@ __all__ = [
     "ConceptScoreRow",
     "Conversation",
     "Document",
+    "EpisodicMemoryRow",
     "Lesson",
     "MemoryEntry",
     "ProgressSnapshot",
@@ -31,6 +34,7 @@ __all__ = [
     "QuizQuestion",
     "Recommendation",
     "Student",
+    "StudentMisconception",
     "Topic",
 ]
 

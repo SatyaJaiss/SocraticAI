@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.schemas.enums import (
@@ -265,6 +267,38 @@ class ConversationMessageView(BaseModel):
     content: str
     metadata: dict = Field(default_factory=dict)
     created_at: str
+
+
+# --------------------------------------------------------------------------- #
+# Memory contracts
+# --------------------------------------------------------------------------- #
+class EpisodicMemory(BaseModel):
+    """A cross-session narrative memory item with optional similarity score."""
+
+    id: int | str
+    student_id: str
+    session_id: str | None = None
+    topic: str = ""
+    summary: str
+    event_type: str = "conversation_summary"
+    provenance: dict[str, Any] = Field(default_factory=dict)
+    created_at: str
+    score: float | None = None
+
+
+class Misconception(BaseModel):
+    """A detected persistent conceptual error."""
+
+    id: int | None = None
+    student_id: str
+    concept: str
+    description: str
+    severity: str = "medium"
+    status: str = "active"
+    confidence: float = 0.8
+    provenance: dict[str, Any] = Field(default_factory=dict)
+    created_at: str
+    resolved_at: str | None = None
 
 
 # --------------------------------------------------------------------------- #

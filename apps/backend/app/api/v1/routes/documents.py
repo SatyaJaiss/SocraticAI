@@ -174,7 +174,7 @@ async def delete_document(
     if record.student_id != current_student.student_id:
         raise AuthorizationError("Access denied: You cannot delete another student's document")
 
-    container.rag.delete_document(doc_id)
+    container.rag.delete_document(doc_id, student_id=current_student.student_id)
     container.document_repo.delete(doc_id)
     logger.info("Deleted document %s for student %s", doc_id, current_student.student_id)
     return {"doc_id": doc_id, "status": "deleted"}

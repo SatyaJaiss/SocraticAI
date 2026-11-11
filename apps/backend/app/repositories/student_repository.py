@@ -163,7 +163,12 @@ class StudentRepository(BaseRepository):
 
     # --------------------------------------------------- concept scores --
     def upsert_concept_score(
-        self, student_id: str, concept: str, proficiency: float
+        self,
+        student_id: str,
+        concept: str,
+        proficiency: float,
+        *,
+        alpha: float | None = None,
     ) -> ConceptScore:
         """Weighted update of a concept's proficiency based on the new score."""
         with self.session() as session:
@@ -181,8 +186,9 @@ class StudentRepository(BaseRepository):
             prev = row.proficiency
             row.attempts += 1
             # Exponential moving average — recent attempts matter more.
-            alpha = 0.6 if row.attempts > 1 else 1.0
-            row.proficiency = round(prev * (1 - alpha) + proficiency * alpha, 4)
+            weight = 0.6 if alpha is None else alpha
+            weight = weight if row.attempts > 1 else 1.0
+            row.proficiency = round(prev * (1 - weight) + proficiency * weight, 4)
             session.flush()
             return ConceptScore(
                 concept=row.concept, proficiency=row.proficiency, attempts=row.attempts

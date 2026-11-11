@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from app.core.config import Settings
 from app.llm.clients.client import LLMClient
@@ -14,6 +15,12 @@ from app.repositories.memory_repository import MemoryRepository
 from app.repositories.progress_repository import ProgressRepository
 from app.repositories.quiz_repository import QuizRepository
 from app.repositories.student_repository import StudentRepository
+
+if TYPE_CHECKING:
+    from app.cache.manager import CacheManager
+    from app.context.builder import ContextBuilder
+    from app.memory.manager import MemoryManager
+    from app.routing.intent_router import JevIntentRouter
 
 
 @dataclass
@@ -30,4 +37,8 @@ class AgentContext:
     document_repo: DocumentRepository
     progress_repo: ProgressRepository
     rag: RAGService
+    cache: CacheManager | None = None
+    memory_manager: MemoryManager | None = None
+    context_builder: ContextBuilder | None = None
+    router: JevIntentRouter | None = None
 

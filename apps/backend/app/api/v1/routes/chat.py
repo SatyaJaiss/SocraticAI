@@ -22,6 +22,11 @@ def _build_initial_state(
     req: ChatRequest,
     conversation_id: str,
     historical_messages: list[dict[str, Any]],
+    *,
+    episodic_memories: list[dict[str, Any]] | None = None,
+    semantic_profile: dict[str, Any] | None = None,
+    assembled_prompt: str = "",
+    token_counts: dict[str, int] | None = None,
 ) -> dict[str, Any]:
     """Build the LangGraph state for a tutoring turn with historical memory continuity."""
     return {
@@ -40,6 +45,10 @@ def _build_initial_state(
         "recommendations": None,
         "rag_context": None,
         "rag_sources": [],
+        "episodic_memories": episodic_memories or [],
+        "semantic_profile": semantic_profile or {},
+        "assembled_prompt": assembled_prompt,
+        "token_counts": token_counts or {},
     }
 
 
@@ -70,11 +79,12 @@ async def chat(
         )
         conversation_id = new_session.id
 
-    # 2. Load recent conversational history to provide continuity across turns
+    # 2. Load recent conversational history using configured token/turn budget
+    history_limit = container.settings.conversation.history_limit
     history_records = container.conversation_repo.list_messages(
         student_id=current_student.student_id,
         conversation_id=conversation_id,
-        limit=10,
+        limit=history_limit,
     )
     historical_messages = [
         {
@@ -86,9 +96,34 @@ async def chat(
         for h in history_records
     ]
 
-    # 3. Invoke the pre-compiled graph singleton with thread isolation
+    # 3. Retrieve layered cross-session memories and assemble token-budgeted prompt
+    contextual_data = container.memory_manager.retrieve_contextual_memories(
+        student_id=current_student.student_id,
+        query=req.message,
+    )
+    raw_memories = contextual_data.get("episodic_memories") or []
+    semantic_profile = contextual_data.get("semantic_profile") or {}
+
+    assembled = container.context_builder.build_context(
+        user_message=req.message,
+        history_messages=historical_messages,
+        episodic_memories=raw_memories,
+        semantic_profile=semantic_profile,
+    )
+
+    episodic_memories = [m.model_dump() for m in raw_memories]
+
+    # 4. Invoke the pre-compiled graph singleton with thread isolation
     graph = container.tutoring_graph
-    initial_state = _build_initial_state(req, conversation_id, historical_messages)
+    initial_state = _build_initial_state(
+        req,
+        conversation_id,
+        assembled.history_messages,
+        episodic_memories=episodic_memories,
+        semantic_profile=semantic_profile,
+        assembled_prompt=assembled.assembled_prompt,
+        token_counts=assembled.token_counts,
+    )
     config = {"configurable": {"thread_id": conversation_id}}
 
     try:
@@ -96,6 +131,19 @@ async def chat(
     except Exception as exc:
         logger.error("Tutoring graph execution failed: %s", exc, exc_info=True)
         raise
+
+    # 5. Periodic cross-session consolidation trigger
+    summary_trigger = container.settings.conversation.summary_trigger_turns
+    if len(history_records) > 0 and len(history_records) % summary_trigger == 0:
+        try:
+            await container.memory_manager.consolidate_session(
+                student_id=current_student.student_id,
+                session_id=conversation_id,
+                messages=historical_messages,
+                topic=req.topic or final.get("topic") or "",
+            )
+        except Exception as exc:
+            logger.warning("Session memory consolidation failed: %s", exc)
 
     return ChatResponse(
         student_id=req.student_id,

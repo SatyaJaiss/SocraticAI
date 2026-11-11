@@ -57,6 +57,13 @@ class Routes:
     ANSWER_QUESTION = "answer_question"
     QUIZ = "quiz"
     RAG_ONLY = "rag_only"
+    GREETING = "greeting"
+    SMALL_TALK = "small_talk"
+    MEMORY_QUERY = "memory_query"
+    PROGRESS = "progress"
+    OFF_TOPIC = "off_topic"
+    CLARIFICATION = "clarification"
+    TUTORING = "tutoring"
     END = "end"
 
 
@@ -194,6 +201,84 @@ class FrontendSettings(BaseSettings):
     api_base_url: str = "http://localhost:8000"
 
 
+class ConversationSettings(BaseSettings):
+    """Conversational history and working memory limits."""
+
+    model_config = SettingsConfigDict(
+        env_prefix="CONVERSATION_", extra="ignore", env_file=_ENV_FILE
+    )
+
+    history_limit: int = 10
+    context_token_budget: int = 1500
+    max_message_length: int = 8000
+    summary_trigger_turns: int = 6
+
+
+class MemorySettings(BaseSettings):
+    """Episodic and semantic memory configuration."""
+
+    model_config = SettingsConfigDict(
+        env_prefix="MEMORY_", extra="ignore", env_file=_ENV_FILE
+    )
+
+    episodic_collection_name: str = "socraticai_episodic_memory"
+    episodic_top_k: int = 4
+    memory_similarity_threshold: float = 0.55
+    max_memory_context_tokens: int = 600
+    consolidation_message_trigger: int = 10
+    concept_ema_alpha: float = 0.6
+
+
+class RoutingSettings(BaseSettings):
+    """Jev (TypeSafe AI) and deterministic routing configuration."""
+
+    model_config = SettingsConfigDict(
+        env_prefix="ROUTING_", extra="ignore", env_file=_ENV_FILE
+    )
+
+    jev_enabled: bool = False
+    jev_api_key: str = ""
+    jev_model: str = "jev-latest"
+    jev_timeout_seconds: float = 5.0
+    jev_retry_count: int = 2
+    confidence_high_threshold: float = 0.70
+    confidence_low_threshold: float = 0.40
+    fallback_strategy: str = "deterministic"
+
+
+class CachingSettings(BaseSettings):
+    """Caching configuration for embeddings, retrieval, and LLM responses."""
+
+    model_config = SettingsConfigDict(
+        env_prefix="CACHE_", extra="ignore", env_file=_ENV_FILE
+    )
+
+    enabled: bool = True
+    backend: str = "memory"
+    max_size: int = 10000
+    default_ttl_seconds: int = 3600
+    embedding_cache_ttl_seconds: int = 86400
+    retrieval_cache_ttl_seconds: int = 1800
+    response_cache_enabled: bool = False
+    response_cache_ttl_seconds: int = 3600
+
+
+class ContextBudgetSettings(BaseSettings):
+    """Token budget allocations across prompt segments."""
+
+    model_config = SettingsConfigDict(
+        env_prefix="CONTEXT_", extra="ignore", env_file=_ENV_FILE
+    )
+
+    total_budget: int = 4000
+    system_prompt_budget: int = 600
+    history_budget: int = 1500
+    episodic_memory_budget: int = 600
+    semantic_profile_budget: int = 400
+    rag_budget: int = 900
+    tokenizer_encoding: str = "cl100k_base"
+
+
 class Settings(BaseSettings):
     """Aggregate settings object injected across the whole application."""
 
@@ -212,6 +297,11 @@ class Settings(BaseSettings):
     auth: AuthSettings = Field(default_factory=AuthSettings)
     logging: LoggingSettings = Field(default_factory=LoggingSettings)
     frontend: FrontendSettings = Field(default_factory=FrontendSettings)
+    conversation: ConversationSettings = Field(default_factory=ConversationSettings)
+    memory: MemorySettings = Field(default_factory=MemorySettings)
+    routing: RoutingSettings = Field(default_factory=RoutingSettings)
+    cache: CachingSettings = Field(default_factory=CachingSettings)
+    context: ContextBudgetSettings = Field(default_factory=ContextBudgetSettings)
     prompts_dir: Path = Field(default_factory=lambda: _PROJECT_ROOT / "configs" / "prompts")
 
 

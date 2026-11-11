@@ -25,10 +25,19 @@ class SocraticAIState(TypedDict, total=False):
     topic: str | None
     with_quiz: bool
 
-    # --- Planner -------------------------------------------------------------
-    intent: str                       # models.enums.ChatIntent value
+    # --- Routing & Intent ----------------------------------------------------
+    intent: str                       # IntentType or legacy ChatIntent value
+    intent_confidence: float
+    intent_reasoning: str
+    routing_decision: dict[str, Any]
     learning_goal: str
     level: str                        # models.enums.StudentLevel value
+
+    # --- Context & Layered Memory --------------------------------------------
+    episodic_memories: list[dict[str, Any]]
+    semantic_profile: dict[str, Any]
+    assembled_prompt: str
+    token_counts: dict[str, int]
 
     # --- Teacher -------------------------------------------------------------
     lesson: dict[str, Any]            # serialised models.schemas.Explanation

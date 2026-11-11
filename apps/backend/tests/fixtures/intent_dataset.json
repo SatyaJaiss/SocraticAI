@@ -1,0 +1,66 @@
+[
+  {"text": "Hello there! Good morning.", "expected_intent": "greeting"},
+  {"text": "Hi, how are you today?", "expected_intent": "greeting"},
+  {"text": "Hey!", "expected_intent": "greeting"},
+  {"text": "Good afternoon SocraticAI", "expected_intent": "greeting"},
+  {"text": "Greetings tutor!", "expected_intent": "greeting"},
+  {"text": "Howdy", "expected_intent": "greeting"},
+
+  {"text": "Thank you so much for the clear explanation!", "expected_intent": "small_talk"},
+  {"text": "Thanks a lot, that was very helpful.", "expected_intent": "small_talk"},
+  {"text": "Who made you and what are you?", "expected_intent": "small_talk"},
+  {"text": "You are awesome, thanks!", "expected_intent": "small_talk"},
+  {"text": "Goodbye, see you tomorrow!", "expected_intent": "small_talk"},
+  {"text": "Have a wonderful day, bye!", "expected_intent": "small_talk"},
+
+  {"text": "Can you explain how photosynthesis works in plants?", "expected_intent": "tutoring"},
+  {"text": "Teach me the fundamental theorem of calculus step by step.", "expected_intent": "tutoring"},
+  {"text": "What is the difference between mitosis and meiosis?", "expected_intent": "tutoring"},
+  {"text": "Help me understand Ohm's Law and how to calculate resistance.", "expected_intent": "tutoring"},
+  {"text": "Walk me through how binary search trees maintain balance.", "expected_intent": "tutoring"},
+  {"text": "Why does ice float on liquid water?", "expected_intent": "tutoring"},
+  {"text": "Derive the quadratic formula from ax^2 + bx + c = 0.", "expected_intent": "tutoring"},
+
+  {"text": "Give me a quiz on linear algebra and matrix multiplication.", "expected_intent": "quiz"},
+  {"text": "Quiz me on European history during the Renaissance.", "expected_intent": "quiz"},
+  {"text": "Can you generate 5 practice questions on organic chemistry?", "expected_intent": "quiz"},
+  {"text": "I want to practice some problem drills on integration by parts.", "expected_intent": "quiz"},
+  {"text": "Test my knowledge of Python data structures.", "expected_intent": "quiz"},
+  {"text": "Start a practice quiz on microeconomics.", "expected_intent": "quiz"},
+
+  {"text": "Here are my answers: 1A, 2C, 3B, 4D.", "expected_intent": "assessment"},
+  {"text": "Submit my quiz answers for grading.", "expected_intent": "assessment"},
+  {"text": "Grade my solution to the physics homework problem.", "expected_intent": "assessment"},
+  {"text": "Evaluate my essay thesis statement on Macbeth.", "expected_intent": "assessment"},
+  {"text": "Please check my work: x = 4 and y = 12.", "expected_intent": "assessment"},
+
+  {"text": "According to the uploaded lecture notes, what is the definition of entropy?", "expected_intent": "document_question"},
+  {"text": "What does my syllabus PDF say about late homework penalties?", "expected_intent": "document_question"},
+  {"text": "From the uploaded slides, explain slide 4 diagram.", "expected_intent": "document_question"},
+  {"text": "In the document I uploaded, what are the three main causes listed?", "expected_intent": "document_question"},
+  {"text": "What does the text say about the Battle of Waterloo in my notes?", "expected_intent": "document_question"},
+
+  {"text": "What did we discuss in our last study session?", "expected_intent": "memory_query"},
+  {"text": "Do you remember which math concepts I struggled with earlier?", "expected_intent": "memory_query"},
+  {"text": "What was the last topic you taught me yesterday?", "expected_intent": "memory_query"},
+  {"text": "Recall our past conversation about cellular biology.", "expected_intent": "memory_query"},
+  {"text": "What are my documented weak areas from our previous chats?", "expected_intent": "memory_query"},
+
+  {"text": "How am I doing overall in my learning progress?", "expected_intent": "learning_progress"},
+  {"text": "Show my mastery level and concept scores.", "expected_intent": "learning_progress"},
+  {"text": "What is my learning progress curve across all topics?", "expected_intent": "learning_progress"},
+  {"text": "How many topics have I mastered so far?", "expected_intent": "learning_progress"},
+  {"text": "Display my performance analytics and quiz stats.", "expected_intent": "learning_progress"},
+
+  {"text": "What is the current weather in San Francisco?", "expected_intent": "off_topic"},
+  {"text": "Give me a recipe for chocolate chip cookies.", "expected_intent": "off_topic"},
+  {"text": "Who won the football game last night?", "expected_intent": "off_topic"},
+  {"text": "What is the stock price of Apple today?", "expected_intent": "off_topic"},
+  {"text": "Can you recommend a good movie to watch tonight?", "expected_intent": "off_topic"},
+
+  {"text": "...", "expected_intent": "unclear"},
+  {"text": "???", "expected_intent": "unclear"},
+  {"text": "asdfghjk", "expected_intent": "unclear"},
+  {"text": "ummm wait", "expected_intent": "unclear"},
+  {"text": "it depends", "expected_intent": "unclear"}
+]

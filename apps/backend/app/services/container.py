@@ -8,9 +8,12 @@ touching the file system.
 from __future__ import annotations
 
 from app.agents.context import AgentContext
+from app.cache.manager import CacheManager
+from app.context.builder import ContextBuilder
 from app.core.config import Settings, get_settings
 from app.db.connection import Database
 from app.llm.clients.client import build_llm_client
+from app.memory.manager import MemoryManager
 from app.rag.pipelines.service import RAGService
 from app.repositories import (
     ConversationRepository,
@@ -21,10 +24,11 @@ from app.repositories import (
     QuizRepository,
     StudentRepository,
 )
+from app.routing.intent_router import JevIntentRouter
 
 
 class Container:
-    """Process-wide singletons: database, repos, LLM and RAG."""
+    """Process-wide singletons: database, repos, LLM, cache, memory, and RAG."""
 
     def __init__(
         self,
@@ -50,8 +54,19 @@ class Container:
         self.document_repo = DocumentRepository(self.db)
         self.progress_repo = ProgressRepository(self.db)
 
+        self.cache = CacheManager(self.settings.cache)
         self.llm = build_llm_client(self.settings.llm)
-        self.rag = RAGService(self.settings.vector_store)
+        self.rag = RAGService(self.settings.vector_store, cache_manager=self.cache)
+
+        self.memory_manager = MemoryManager(
+            db=self.db,
+            memory_settings=self.settings.memory,
+            vector_settings=self.settings.vector_store,
+            llm=self.llm,
+            cache_manager=self.cache,
+        )
+        self.context_builder = ContextBuilder(self.settings.context)
+        self.router = JevIntentRouter(self.settings.routing)
 
         self._tutoring_graph = None
         self._evaluation_graph = None
@@ -87,6 +102,10 @@ class Container:
             document_repo=self.document_repo,
             progress_repo=self.progress_repo,
             rag=self.rag,
+            cache=self.cache,
+            memory_manager=self.memory_manager,
+            context_builder=self.context_builder,
+            router=self.router,
         )
 
     def dispose(self) -> None:
