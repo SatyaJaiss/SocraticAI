@@ -112,3 +112,4 @@ Empirical benchmarking demonstrates the efficiency advantages of the routing arc
 | **Standard Tutoring (New)** | 2 LLM calls | **1,800 - 3,100 ms** | 1,400 tokens | 3 |
 
 **Outcome:** Over 40% of standard tutoring platform interactions (greetings, progress inquiries, off-topic requests) are resolved with **zero LLM generation tokens**, slashing API operating costs and delivering sub-second response times.
+

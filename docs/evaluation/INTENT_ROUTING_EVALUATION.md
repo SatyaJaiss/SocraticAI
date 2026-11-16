@@ -129,3 +129,4 @@ Accuracy / Fallback Rate vs. Confidence Threshold
 1. **Keep Fallback Enabled:** Ensure `ROUTING_FALLBACK_ON_ERROR=true` remains set in production to provide 100% uptime even during upstream network connectivity interruptions.
 2. **Maintain Automated Benchmark in CI:** Retain `apps/backend/tests/integration/test_intent_evaluation.py` in the GitHub Actions / CI workflow to continuously enforce the $\ge 85\%$ accuracy gate.
 3. **Telemetry & Intent Drift:** Log anonymized intent distributions to monitor when students ask unanticipated question styles, allowing continuous expansion of `intent_dataset.json`.
+

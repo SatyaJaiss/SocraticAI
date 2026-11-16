@@ -269,3 +269,4 @@ To prevent unbounded table and index growth over multi-year tutoring relationshi
 1. **Low-Importance Pruning:** Episodic entries with $\text{Importance} < 0.3$ and age $> 90$ days are pruned during scheduled maintenance.
 2. **Episodic Rollup:** Multiple episodic memories on the same topic are periodically rolled up into a single consolidated milestone memory.
 3. **Misconception Lifecycle:** When a misconception is addressed and verified as resolved in subsequent evaluation quizzes, `resolved` is set to `True`, `resolved_at` is updated, and it is excluded from the active system prompt context.
+

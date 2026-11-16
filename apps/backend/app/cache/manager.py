@@ -153,3 +153,4 @@ class CacheManager:
             "response_cache_enabled": self._settings.response_cache_enabled,
             **self._backend.stats(),
         }
+

@@ -156,3 +156,4 @@ Both tables use SQLite-compatible columns and SQLAlchemy's `Base.metadata.create
 * **Privacy**: Data transmitted to Jev contains only the user input string; no tokens, student IDs, document texts, or memory contents are sent.
 * **Fallback Guarantee**: If `TYPESAFE_API_KEY` is omitted or Jev encounters network timeouts, the system automatically falls back to deterministic rule routing without degrading availability.
 * **Conclusion**: Safe to proceed with implementation.
+
