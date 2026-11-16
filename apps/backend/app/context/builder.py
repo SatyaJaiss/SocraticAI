@@ -198,9 +198,17 @@ class ContextBuilder:
         if rag_chunks:
             rag_lines = []
             budget_rag = self.settings.rag_budget
+            seen_content_keys = set()
             for chunk in rag_chunks:
+                # Context deduplication by hash or content
+                c_key = chunk.content_hash or hash(chunk.content.strip())
+                if c_key in seen_content_keys:
+                    continue
+                seen_content_keys.add(c_key)
+
                 source_label = f"{chunk.source}" + (f" (p.{chunk.page})" if chunk.page else "")
-                block = f"--- Source: {source_label} ---\n{chunk.content}"
+                sec_label = f" [{chunk.section_title}]" if chunk.section_title else ""
+                block = f"--- Source: {source_label}{sec_label} ---\n{chunk.content}"
                 t_count = self.count_tokens(block)
                 if rag_tokens_used + t_count <= budget_rag:
                     rag_lines.append(block)

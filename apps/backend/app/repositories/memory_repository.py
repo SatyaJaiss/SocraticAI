@@ -48,9 +48,7 @@ class MemoryRepository(BaseRepository):
                 for r in reversed(rows)
             ]
 
-    def latest_facts_by_type(
-        self, student_id: str, fact_type: str, limit: int = 5
-    ) -> list[dict]:
+    def latest_facts_by_type(self, student_id: str, fact_type: str, limit: int = 5) -> list[dict]:
         return self.list_facts(student_id, fact_type=fact_type, limit=limit)
 
     # ----------------------------------------------------- recommendations --

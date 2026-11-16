@@ -31,12 +31,16 @@ class LessonRepository(BaseRepository):
         from sqlalchemy import select
 
         with self.session() as session:
-            rows = session.execute(
-                select(Lesson)
-                .where(Lesson.student_id == student_id)
-                .order_by(Lesson.id.desc())
-                .limit(limit)
-            ).scalars().all()
+            rows = (
+                session.execute(
+                    select(Lesson)
+                    .where(Lesson.student_id == student_id)
+                    .order_by(Lesson.id.desc())
+                    .limit(limit)
+                )
+                .scalars()
+                .all()
+            )
             return [
                 Explanation(
                     topic=r.topic,

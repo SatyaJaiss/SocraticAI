@@ -93,4 +93,3 @@ class TestJWTToken:
 
         with pytest.raises(AuthenticationError):
             decode_access_token("a.b.c", "")
-

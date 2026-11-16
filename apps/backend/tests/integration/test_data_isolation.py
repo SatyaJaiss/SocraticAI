@@ -33,13 +33,17 @@ class TestMultiTenantDataIsolation:
 
         # 1. Direct RAG Service Verification
         # Student A queries for 'Magna Carta' -> MUST NOT retrieve Student B's notes
-        chunks_for_a = container.rag.search("Magna Carta 1215 King John", student_id="student_quantum")
+        chunks_for_a = container.rag.search(
+            "Magna Carta 1215 King John", student_id="student_quantum"
+        )
         assert all("history" not in c.source for c in chunks_for_a), (
             "Student Quantum must never receive Student History's notes!"
         )
 
         # Student B queries for 'Qubits superposition' -> MUST NOT retrieve Student A's notes
-        chunks_for_b = container.rag.search("Qubits superposition entanglement", student_id="student_history")
+        chunks_for_b = container.rag.search(
+            "Qubits superposition entanglement", student_id="student_history"
+        )
         assert all("quantum" not in c.source for c in chunks_for_b), (
             "Student History must never receive Student Quantum's notes!"
         )

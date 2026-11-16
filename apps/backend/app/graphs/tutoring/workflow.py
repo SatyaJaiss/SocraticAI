@@ -140,7 +140,9 @@ class WorkflowNodes:
                 pct = round(s.proficiency * 100)
                 lines.append(f"   - {s.concept}: {pct}% (Attempts: {s.attempts})")
         else:
-            lines.append("• No formal concept scores recorded yet. Complete a quiz to track your mastery!")
+            lines.append(
+                "• No formal concept scores recorded yet. Complete a quiz to track your mastery!"
+            )
 
         lines.append("\nKeep up the great work! What topic would you like to study next?")
         return {

@@ -13,9 +13,7 @@ from app.utils.helpers import utc_now_iso
 class ProgressRepository(BaseRepository):
     """Append-only log of (topic, score, timestamp) points."""
 
-    def add_snapshot(
-        self, student_id: str, topic: str, score: float
-    ) -> int:
+    def add_snapshot(self, student_id: str, topic: str, score: float) -> int:
         with self.session() as session:
             row = ProgressSnapshot(
                 student_id=student_id,
@@ -27,23 +25,20 @@ class ProgressRepository(BaseRepository):
             session.flush()
             return row.id
 
-    def list_snapshots(
-        self, student_id: str, limit: int = 200
-    ) -> list[ProgressPoint]:
+    def list_snapshots(self, student_id: str, limit: int = 200) -> list[ProgressPoint]:
         """Chronological progress points (oldest first)."""
         with self.session() as session:
-            rows = session.execute(
-                select(ProgressSnapshot)
-                .where(ProgressSnapshot.student_id == student_id)
-                .order_by(ProgressSnapshot.id.asc())
-                .limit(limit)
-            ).scalars().all()
-            return [
-                ProgressPoint(
-                    date=r.created_at, score=r.score, topic=r.topic
+            rows = (
+                session.execute(
+                    select(ProgressSnapshot)
+                    .where(ProgressSnapshot.student_id == student_id)
+                    .order_by(ProgressSnapshot.id.asc())
+                    .limit(limit)
                 )
-                for r in rows
-            ]
+                .scalars()
+                .all()
+            )
+            return [ProgressPoint(date=r.created_at, score=r.score, topic=r.topic) for r in rows]
 
     def latest_score(self, student_id: str) -> ProgressPoint | None:
         with self.session() as session:
@@ -60,7 +55,7 @@ class ProgressRepository(BaseRepository):
     def count(self, student_id: str) -> int:
         with self.session() as session:
             return session.execute(
-                select(func.count()).select_from(ProgressSnapshot).where(
-                    ProgressSnapshot.student_id == student_id
-                )
+                select(func.count())
+                .select_from(ProgressSnapshot)
+                .where(ProgressSnapshot.student_id == student_id)
             ).scalar_one()

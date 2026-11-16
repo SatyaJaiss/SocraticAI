@@ -58,9 +58,7 @@ class TestChunkText:
 class TestChunkDocumentPages:
     def test_tags_chunks_with_page_and_source(self):
         pages = [(1, "Page one text " * 10), (2, "Page two text " * 10)]
-        chunks = chunk_document_pages(
-            pages, chunk_size=50, overlap=10, source="notes.md"
-        )
+        chunks = chunk_document_pages(pages, chunk_size=50, overlap=10, source="notes.md")
         assert chunks
         assert all(c["source"] == "notes.md" for c in chunks)
         pages_seen = {c["page"] for c in chunks}

@@ -69,4 +69,3 @@ def parse_score_float(raw: Any, *, default: float = 0.0) -> float:
         return float(raw)
     except (TypeError, ValueError):
         return default
-

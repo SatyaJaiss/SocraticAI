@@ -179,4 +179,3 @@ class TestCacheManager:
         mgr.set_llm_response("gpt-4o", "Explain gravity", "beginner", "Gravity is a force...")
         cached = mgr.get_llm_response("gpt-4o", "Explain gravity", "beginner")
         assert cached == "Gravity is a force..."
-

@@ -39,4 +39,3 @@ def build_evaluation_graph(ctx: AgentContext) -> CompiledStateGraph:
 
     logger.debug("Evaluation graph compiled")
     return graph.compile()
-

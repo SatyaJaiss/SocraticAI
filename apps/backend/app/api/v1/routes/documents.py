@@ -45,12 +45,16 @@ def _validate_file_content(content: bytes, ext: str) -> None:
     """Inspect magic bytes and content headers to reject disguised malicious files."""
     if ext == ".pdf":
         if not content.startswith(b"%PDF-"):
-            raise UnsupportedMediaTypeError("Invalid file content: The file does not have a valid PDF header.")
+            raise UnsupportedMediaTypeError(
+                "Invalid file content: The file does not have a valid PDF header."
+            )
     elif ext in {".txt", ".md"}:
         try:
             content.decode("utf-8")
         except UnicodeDecodeError as exc:
-            raise UnsupportedMediaTypeError("Invalid text content: File must be UTF-8 encoded text.") from exc
+            raise UnsupportedMediaTypeError(
+                "Invalid text content: File must be UTF-8 encoded text."
+            ) from exc
 
 
 @router.post("/{student_id}")
@@ -85,9 +89,7 @@ async def upload_document(
         total_read += len(chunk)
         if total_read > max_size:
             max_mb = max_size // (1024 * 1024)
-            raise PayloadTooLargeError(
-                f"File size exceeds the maximum limit of {max_mb} MB"
-            )
+            raise PayloadTooLargeError(f"File size exceeds the maximum limit of {max_mb} MB")
         buffer.extend(chunk)
 
     content = bytes(buffer)
@@ -97,6 +99,27 @@ async def upload_document(
     # 2. Validate file signatures and encoding
     _validate_file_content(content, suffix)
 
+    import hashlib
+
+    content_hash = hashlib.sha256(content).hexdigest()
+
+    # Check for duplicate document for this student
+    existing = container.document_repo.find_by_content_hash(student_id, content_hash)
+    if existing and existing.status == DocumentStatus.READY.value:
+        logger.info(
+            "Duplicate document upload detected for student %s (doc_id=%s, hash=%s)",
+            student_id,
+            existing.id,
+            content_hash[:8],
+        )
+        return {
+            "doc_id": existing.id,
+            "filename": sanitized_filename,
+            "status": "duplicate_detected",
+            "chunk_count": existing.chunk_count,
+            "message": "Document already ingested with identical content",
+        }
+
     doc_id = generate_id("doc")
 
     # 3. Persist document metadata row
@@ -104,6 +127,7 @@ async def upload_document(
         document_id=doc_id,
         student_id=student_id,
         filename=sanitized_filename,
+        content_hash=content_hash,
         status=DocumentStatus.UPLOADED.value,
     )
 
@@ -113,7 +137,12 @@ async def upload_document(
         with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
             tmp.write(content)
             tmp_path = tmp.name
-        chunks = ingest_document(tmp_path, source=sanitized_filename)
+        chunks = ingest_document(
+            tmp_path,
+            source=sanitized_filename,
+            doc_id=doc_id,
+            student_id=student_id,
+        )
     except IngestionError as exc:
         container.document_repo.update_status(doc_id, DocumentStatus.FAILED.value)
         return {"error": str(exc), "status": "failed"}

@@ -90,4 +90,3 @@ def get_logger(name: str) -> logging.Logger:
         # Safe fallback so tests/logging work before explicit setup.
         setup_logging(LoggingSettings())
     return logging.getLogger(name)
-

@@ -176,6 +176,9 @@ class Document(Base):
     filepath: Mapped[str] = mapped_column(String(512), default="")
     status: Mapped[str] = mapped_column(String(32), default="uploaded")
     chunk_count: Mapped[int] = mapped_column(Integer, default=0)
+    content_hash: Mapped[str | None] = mapped_column(
+        String(64), nullable=True, index=True, default=None
+    )
     created_at: Mapped[str] = mapped_column(String(32))
 
 
@@ -237,5 +240,3 @@ class StudentMisconception(Base):
     provenance: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[str] = mapped_column(String(32))
     resolved_at: Mapped[str | None] = mapped_column(String(32), nullable=True)
-
-

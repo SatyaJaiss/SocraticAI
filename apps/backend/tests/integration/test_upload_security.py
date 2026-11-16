@@ -81,4 +81,3 @@ class TestUploadSecurity:
         assert "/" not in stored_name
         assert "\\" not in stored_name
         assert stored_name == "passwd.txt"
-

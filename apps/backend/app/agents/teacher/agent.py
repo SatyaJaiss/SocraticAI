@@ -48,14 +48,29 @@ class TeacherAgent:
         self._ctx.lesson_repo.save_lesson(student_id, lesson)
         self._ctx.student_repo.add_topic_learned(student_id, lesson.topic)
 
+        # Run citation verification if available
+        verification_data = None
+        if self._ctx.citation_verifier and student_id != "anonymous":
+            rag_context = state.get("rag_context") or {}
+            raw_chunks = rag_context.get("retrieved_chunks") or []
+            from app.schemas.domain import RetrievedChunk
+
+            chunk_objs = [RetrievedChunk(**c) if isinstance(c, dict) else c for c in raw_chunks]
+            full_text = f"{lesson.summary} {lesson.explanation}"
+            res = self._ctx.citation_verifier.verify_turn(
+                full_text, student_id=student_id, retrieved_chunks=chunk_objs
+            )
+            verification_data = res.model_dump()
+
         message = self._format_message(lesson)
         logger.info("Teacher delivered lesson on %r", lesson.topic)
-        return {
+        result_payload = {
             "lesson": lesson.model_dump(),
-            "messages": [
-                {"role": "assistant", "content": message, "node": self.name}
-            ],
+            "messages": [{"role": "assistant", "content": message, "node": self.name}],
         }
+        if verification_data:
+            result_payload["citation_verification"] = verification_data
+        return result_payload
 
     # ------------------------------------------------------------ helpers --
     @staticmethod

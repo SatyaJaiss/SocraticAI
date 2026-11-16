@@ -103,9 +103,7 @@ class LLMClient:
         return self._model
 
     # ------------------------------------------------------------ generate --
-    async def generate(
-        self, system: str, user: str, *, temperature: float | None = None
-    ) -> str:
+    async def generate(self, system: str, user: str, *, temperature: float | None = None) -> str:
         """Return the raw text completion for a system+user message pair."""
         attempts = self._settings.max_retries + 1
         model = self._get_model()
@@ -152,8 +150,7 @@ class LLMClient:
         payload = safe_json_parse(text)
         if payload is None:
             raise LLMOutputParsingError(
-                "Model did not return parseable JSON. "
-                f"First 200 chars: {text[:200]!r}"
+                f"Model did not return parseable JSON. First 200 chars: {text[:200]!r}"
             )
         try:
             return model_class.model_validate(payload)

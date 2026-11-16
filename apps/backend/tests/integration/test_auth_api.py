@@ -153,4 +153,3 @@ class TestAuthAPI:
         assert resp.status_code == 401
         assert resp.json()["error"] == "AUTHENTICATION_ERROR"
         assert "expired" in resp.json()["message"].lower()
-

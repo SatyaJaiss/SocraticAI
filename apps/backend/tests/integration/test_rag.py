@@ -16,7 +16,11 @@ class TestRAGService:
         ctx.rag.ingest_chunks(
             "doc_x",
             [
-                {"text": "Photosynthesis converts sunlight to energy.", "page": 1, "source": "bio.txt"},
+                {
+                    "text": "Photosynthesis converts sunlight to energy.",
+                    "page": 1,
+                    "source": "bio.txt",
+                },
                 {"text": "Enzymes speed up chemical reactions.", "page": 2, "source": "bio.txt"},
             ],
         )

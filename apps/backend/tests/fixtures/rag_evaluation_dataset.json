@@ -1,0 +1,1002 @@
+[
+  {
+    "id": "rag_001",
+    "category": "exact_terminology",
+    "query": "What is AdamW weight decay?",
+    "document": "deep_learning_optimization.pdf",
+    "relevant_chunk_ids": ["doc_opt::c3::adamw"],
+    "expected_pages": [3],
+    "expected_passages": ["AdamW decouples weight decay from gradient updates"],
+    "expected_answer_characteristics": "Explains that AdamW fixes L2 regularization in Adam by directly decaying weights."
+  },
+  {
+    "id": "rag_002",
+    "category": "exact_terminology",
+    "query": "Explain torch.nn.CrossEntropyLoss formulation.",
+    "document": "deep_learning_optimization.pdf",
+    "relevant_chunk_ids": ["doc_opt::c4::loss"],
+    "expected_pages": [4],
+    "expected_passages": ["torch.nn.CrossEntropyLoss combines LogSoftmax and NLLLoss"],
+    "expected_answer_characteristics": "Mentions LogSoftmax and Negative Log Likelihood."
+  },
+  {
+    "id": "rag_003",
+    "category": "exact_terminology",
+    "query": "What does RRF stand for in information retrieval?",
+    "document": "search_algorithms.pdf",
+    "relevant_chunk_ids": ["doc_search::c1::rrf"],
+    "expected_pages": [1],
+    "expected_passages": ["Reciprocal Rank Fusion (RRF) is an algorithm to combine ranked lists"],
+    "expected_answer_characteristics": "Names Reciprocal Rank Fusion."
+  },
+  {
+    "id": "rag_004",
+    "category": "exact_terminology",
+    "query": "What is TF-IDF BM25 Okapi?",
+    "document": "search_algorithms.pdf",
+    "relevant_chunk_ids": ["doc_search::c2::bm25"],
+    "expected_pages": [2],
+    "expected_passages": ["BM25 is a ranking function based on probabilistic relevance"],
+    "expected_answer_characteristics": "Mentions term frequency and document frequency saturation."
+  },
+  {
+    "id": "rag_005",
+    "category": "exact_terminology",
+    "query": "What is ROC-AUC score?",
+    "document": "evaluation_metrics.pdf",
+    "relevant_chunk_ids": ["doc_eval::c1::roc"],
+    "expected_pages": [1],
+    "expected_passages": ["Receiver Operating Characteristic Area Under the Curve measures discrimination"],
+    "expected_answer_characteristics": "Explains true positive vs false positive rate across thresholds."
+  },
+  {
+    "id": "rag_006",
+    "category": "exact_terminology",
+    "query": "What is BLEU score in NLP?",
+    "document": "evaluation_metrics.pdf",
+    "relevant_chunk_ids": ["doc_eval::c3::bleu"],
+    "expected_pages": [3],
+    "expected_passages": ["Bilingual Evaluation Understudy measures n-gram precision with brevity penalty"],
+    "expected_answer_characteristics": "Details n-gram precision and brevity penalty."
+  },
+  {
+    "id": "rag_007",
+    "category": "exact_terminology",
+    "query": "What is ROUGE-L metric?",
+    "document": "evaluation_metrics.pdf",
+    "relevant_chunk_ids": ["doc_eval::c4::rouge"],
+    "expected_pages": [4],
+    "expected_passages": ["ROUGE-L evaluates the longest common subsequence between reference and hypothesis"],
+    "expected_answer_characteristics": "Identifies longest common subsequence."
+  },
+  {
+    "id": "rag_008",
+    "category": "exact_terminology",
+    "query": "What does GBDT stand for?",
+    "document": "tree_models.pdf",
+    "relevant_chunk_ids": ["doc_tree::c1::gbdt"],
+    "expected_pages": [1],
+    "expected_passages": ["Gradient Boosted Decision Trees sequentially fit decision trees to pseudo-residuals"],
+    "expected_answer_characteristics": "Gradient Boosted Decision Trees."
+  },
+  {
+    "id": "rag_009",
+    "category": "exact_terminology",
+    "query": "Define PyTorch autograd engine.",
+    "document": "deep_learning_optimization.pdf",
+    "relevant_chunk_ids": ["doc_opt::c1::autograd"],
+    "expected_pages": [1],
+    "expected_passages": ["autograd is PyTorch's automatic differentiation engine for reverse-mode autodiff"],
+    "expected_answer_characteristics": "Mentions reverse-mode automatic differentiation graph."
+  },
+  {
+    "id": "rag_010",
+    "category": "exact_terminology",
+    "query": "What is Tiktoken BPE encoding?",
+    "document": "nlp_tokenization.pdf",
+    "relevant_chunk_ids": ["doc_nlp::c2::tiktoken"],
+    "expected_pages": [2],
+    "expected_passages": ["Tiktoken uses Byte Pair Encoding on UTF-8 bytes for subword tokenization"],
+    "expected_answer_characteristics": "Subword byte pair encoding."
+  },
+  {
+    "id": "rag_011",
+    "category": "conceptual",
+    "query": "How does backpropagation compute gradients?",
+    "document": "neural_networks_intro.pdf",
+    "relevant_chunk_ids": ["doc_nn::c2::backprop"],
+    "expected_pages": [2],
+    "expected_passages": ["Backpropagation applies the calculus chain rule recursively from output to input"],
+    "expected_answer_characteristics": "Chain rule and reverse pass computation."
+  },
+  {
+    "id": "rag_012",
+    "category": "conceptual",
+    "query": "What is entropy in thermodynamics?",
+    "document": "thermodynamics.pdf",
+    "relevant_chunk_ids": ["doc_thermo::c1::entropy"],
+    "expected_pages": [1],
+    "expected_passages": ["Entropy is a measure of the microscopic disorder and unavailable energy in a system"],
+    "expected_answer_characteristics": "Microstates, second law, irreversibility."
+  },
+  {
+    "id": "rag_013",
+    "category": "conceptual",
+    "query": "How does the second law of thermodynamics govern heat flow?",
+    "document": "thermodynamics.pdf",
+    "relevant_chunk_ids": ["doc_thermo::c2::second_law"],
+    "expected_pages": [2],
+    "expected_passages": ["Heat cannot spontaneously flow from a colder body to a hotter body without external work"],
+    "expected_answer_characteristics": "Spontaneous heat transfer direction."
+  },
+  {
+    "id": "rag_014",
+    "category": "conceptual",
+    "query": "What is the physical meaning of enthalpy?",
+    "document": "thermodynamics.pdf",
+    "relevant_chunk_ids": ["doc_thermo::c3::enthalpy"],
+    "expected_pages": [3],
+    "expected_passages": ["Enthalpy H = U + PV represents the total heat content of an open or constant-pressure system"],
+    "expected_answer_characteristics": "Internal energy plus pressure-volume work."
+  },
+  {
+    "id": "rag_015",
+    "category": "conceptual",
+    "query": "Why do vanishing gradients occur in deep neural networks?",
+    "document": "neural_networks_intro.pdf",
+    "relevant_chunk_ids": ["doc_nn::c4::vanishing"],
+    "expected_pages": [4],
+    "expected_passages": ["Saturating activations like sigmoid have derivatives bounded by 0.25, exponentially shrinking gradients"],
+    "expected_answer_characteristics": "Chain multiplication of values less than 1."
+  },
+  {
+    "id": "rag_016",
+    "category": "conceptual",
+    "query": "How does layer normalization differ conceptually from batch normalization?",
+    "document": "transformer_architecture.pdf",
+    "relevant_chunk_ids": ["doc_trans::c3::layernorm"],
+    "expected_pages": [3],
+    "expected_passages": ["LayerNorm computes statistics across hidden features for each sample independently"],
+    "expected_answer_characteristics": "Across features vs across batch dimension."
+  },
+  {
+    "id": "rag_017",
+    "category": "conceptual",
+    "query": "What is overfitting and how does regularization mitigate it?",
+    "document": "machine_learning_basics.pdf",
+    "relevant_chunk_ids": ["doc_ml::c3::regularization"],
+    "expected_pages": [3],
+    "expected_passages": ["Overfitting occurs when a model fits training noise; regularization penalizes model complexity"],
+    "expected_answer_characteristics": "Bias-variance tradeoff and parameter constraints."
+  },
+  {
+    "id": "rag_018",
+    "category": "conceptual",
+    "query": "Explain the concept of cross-entropy loss in classification.",
+    "document": "machine_learning_basics.pdf",
+    "relevant_chunk_ids": ["doc_ml::c2::crossentropy"],
+    "expected_pages": [2],
+    "expected_passages": ["Cross-entropy measures the divergence between predicted probability distributions and true one-hot labels"],
+    "expected_answer_characteristics": "Kullback-Leibler divergence and negative log likelihood."
+  },
+  {
+    "id": "rag_019",
+    "category": "conceptual",
+    "query": "How does self-attention enable parallel sequence processing?",
+    "document": "transformer_architecture.pdf",
+    "relevant_chunk_ids": ["doc_trans::c1::attention"],
+    "expected_pages": [1],
+    "expected_passages": ["Self-attention computes pairwise query-key similarities simultaneously via matrix multiplication"],
+    "expected_answer_characteristics": "Direct pairwise computation without sequential recurrence."
+  },
+  {
+    "id": "rag_020",
+    "category": "conceptual",
+    "query": "What is the purpose of residual connections in deep networks?",
+    "document": "neural_networks_intro.pdf",
+    "relevant_chunk_ids": ["doc_nn::c5::residuals"],
+    "expected_pages": [5],
+    "expected_passages": ["Skip connections allow gradients to flow directly through identity mappings without attenuation"],
+    "expected_answer_characteristics": "Gradient highway mitigating vanishing gradients."
+  },
+  {
+    "id": "rag_021",
+    "category": "multi_hop",
+    "query": "How does learning rate decay prevent oscillation around loss minima during stochastic gradient descent?",
+    "document": "deep_learning_optimization.pdf",
+    "relevant_chunk_ids": ["doc_opt::c2::lr_decay", "doc_opt::c3::sgd_dynamics"],
+    "expected_pages": [2, 3],
+    "expected_passages": ["High initial learning rate enables fast exploration; decaying stepsizes dampen stochastic noise"],
+    "expected_answer_characteristics": "Connects step size reduction to stabilizing noisy mini-batch variance."
+  },
+  {
+    "id": "rag_022",
+    "category": "multi_hop",
+    "query": "How do activation functions affect the magnitude of backpropagated gradients in deep RNNs?",
+    "document": "neural_networks_intro.pdf",
+    "relevant_chunk_ids": ["doc_nn::c4::vanishing", "doc_nn::c6::rnn_recurrence"],
+    "expected_pages": [4, 6],
+    "expected_passages": ["Repeated multiplication by tanh or sigmoid derivatives over time steps causes exponential decay"],
+    "expected_answer_characteristics": "Connects recurrent time unrolling with activation derivative bounds."
+  },
+  {
+    "id": "rag_023",
+    "category": "multi_hop",
+    "query": "Why does cosine annealing learning rate schedule improve transformer generalization?",
+    "document": "transformer_architecture.pdf",
+    "relevant_chunk_ids": ["doc_trans::c4::schedules", "doc_trans::c5::generalization"],
+    "expected_pages": [4, 5],
+    "expected_passages": ["Warmup stabilizes initial attention matrices while cosine decay settles the model into flatter minima"],
+    "expected_answer_characteristics": "Combines warmup phase with flat minima convergence."
+  },
+  {
+    "id": "rag_024",
+    "category": "multi_hop",
+    "query": "How does vector quantisation in VQ-VAE eliminate posterior collapse seen in standard VAEs?",
+    "document": "generative_models.pdf",
+    "relevant_chunk_ids": ["doc_gen::c3::vqvae", "doc_gen::c1::vae_collapse"],
+    "expected_pages": [1, 3],
+    "expected_passages": ["Discrete codebook embeddings bound the latent information capacity preventing KL divergence from collapsing to zero"],
+    "expected_answer_characteristics": "Contrasts continuous Gaussian KL collapse with discrete codebook assignment."
+  },
+  {
+    "id": "rag_025",
+    "category": "multi_hop",
+    "query": "What is the relationship between temperature parameter and entropy in softmax generation?",
+    "document": "transformer_architecture.pdf",
+    "relevant_chunk_ids": ["doc_trans::c2::sampling", "doc_thermo::c1::entropy"],
+    "expected_pages": [2],
+    "expected_passages": ["Dividing logits by temperature T scales output entropy; higher T increases randomness toward uniform distribution"],
+    "expected_answer_characteristics": "Connects temperature scaling to probability flattening and Shannon entropy."
+  },
+  {
+    "id": "rag_026",
+    "category": "multi_hop",
+    "query": "How does positional encoding combine with query-key dot products to encode sequence order?",
+    "document": "transformer_architecture.pdf",
+    "relevant_chunk_ids": ["doc_trans::c1::attention", "doc_trans::c6::pos_encoding"],
+    "expected_pages": [1, 6],
+    "expected_passages": ["Adding sinusoidal vectors to token embeddings introduces position-dependent inner products into attention weights"],
+    "expected_answer_characteristics": "Shows how vector addition affects the query-key dot product."
+  },
+  {
+    "id": "rag_027",
+    "category": "multi_hop",
+    "query": "Why does gradient clipping resolve exploding gradients without altering the direction of descent?",
+    "document": "deep_learning_optimization.pdf",
+    "relevant_chunk_ids": ["doc_opt::c5::clipping"],
+    "expected_pages": [5],
+    "expected_passages": ["Scaling the gradient vector by min(1, threshold / ||g||) rescales magnitude while preserving vector angle"],
+    "expected_answer_characteristics": "Explains vector norm normalization."
+  },
+  {
+    "id": "rag_028",
+    "category": "multi_hop",
+    "query": "How does BM25 document length normalization prevent long documents from dominating search results?",
+    "document": "search_algorithms.pdf",
+    "relevant_chunk_ids": ["doc_search::c2::bm25", "doc_search::c3::length_norm"],
+    "expected_pages": [2, 3],
+    "expected_passages": ["The parameter b penalizes term frequencies by the ratio of document length to average collection length"],
+    "expected_answer_characteristics": "Explains parameter b and doc_len / avg_len scaling."
+  },
+  {
+    "id": "rag_029",
+    "category": "multi_hop",
+    "query": "How does weight decay in AdamW differ from standard L2 weight penalty in vanilla SGD?",
+    "document": "deep_learning_optimization.pdf",
+    "relevant_chunk_ids": ["doc_opt::c3::adamw", "doc_opt::c6::l2_penalty"],
+    "expected_pages": [3, 6],
+    "expected_passages": ["In Adam, moving average of squared gradients scales L2 gradients improperly; AdamW subtracts weight directly"],
+    "expected_answer_characteristics": "Contrasts adaptive gradient scaling of weight penalty with decoupled subtraction."
+  },
+  {
+    "id": "rag_030",
+    "category": "multi_hop",
+    "query": "How does data parallelism synchronise gradients across multiple GPU worker nodes?",
+    "document": "distributed_training.pdf",
+    "relevant_chunk_ids": ["doc_dist::c1::data_parallel", "doc_dist::c2::allreduce"],
+    "expected_pages": [1, 2],
+    "expected_passages": ["Ring-AllReduce accumulates gradients across nodes with bandwidth-optimal peer-to-peer ring communication"],
+    "expected_answer_characteristics": "Ring-AllReduce gradient averaging."
+  },
+  {
+    "id": "rag_031",
+    "category": "comparison",
+    "query": "Compare CNN and RNN architectures and when should I use each?",
+    "document": "neural_networks_intro.pdf",
+    "relevant_chunk_ids": ["doc_nn::c1::cnn", "doc_nn::c6::rnn_recurrence"],
+    "expected_pages": [1, 6],
+    "expected_passages": ["CNNs use spatial convolution for grid data like images; RNNs maintain temporal hidden states for sequential data"],
+    "expected_answer_characteristics": "Spatial vs temporal, image vs sequential text."
+  },
+  {
+    "id": "rag_032",
+    "category": "comparison",
+    "query": "What is the difference between BFS and DFS traversal algorithms?",
+    "document": "graph_algorithms.pdf",
+    "relevant_chunk_ids": ["doc_graph::c1::bfs", "doc_graph::c2::dfs"],
+    "expected_pages": [1, 2],
+    "expected_passages": ["BFS explores level by level using a queue; DFS explores along paths using a stack or recursion"],
+    "expected_answer_characteristics": "Queue vs stack, shortest path vs deep exploration."
+  },
+  {
+    "id": "rag_033",
+    "category": "comparison",
+    "query": "Compare Dense Vector search with BM25 Lexical search.",
+    "document": "search_algorithms.pdf",
+    "relevant_chunk_ids": ["doc_search::c1::rrf", "doc_search::c2::bm25"],
+    "expected_pages": [1, 2],
+    "expected_passages": ["Dense search captures semantic paraphrasing; BM25 matches exact keywords, identifiers, and formulas"],
+    "expected_answer_characteristics": "Semantic vs keyword, vocabulary mismatch vs exact technical matching."
+  },
+  {
+    "id": "rag_034",
+    "category": "comparison",
+    "query": "Compare L1 Lasso regularization with L2 Ridge regularization.",
+    "document": "machine_learning_basics.pdf",
+    "relevant_chunk_ids": ["doc_ml::c3::regularization", "doc_ml::c4::l1_l2"],
+    "expected_pages": [3, 4],
+    "expected_passages": ["L1 penalty produces sparse feature weights; L2 shrinks weights smoothly toward zero without zeroing them"],
+    "expected_answer_characteristics": "Sparsity and feature selection vs smooth shrinkage."
+  },
+  {
+    "id": "rag_035",
+    "category": "comparison",
+    "query": "Compare supervised learning and unsupervised learning.",
+    "document": "machine_learning_basics.pdf",
+    "relevant_chunk_ids": ["doc_ml::c1::paradigms"],
+    "expected_pages": [1],
+    "expected_passages": ["Supervised learning trains on labeled input-output pairs; unsupervised discovers latent patterns in unlabeled data"],
+    "expected_answer_characteristics": "Presence of ground truth targets vs clustering/dimensionality reduction."
+  },
+  {
+    "id": "rag_036",
+    "category": "comparison",
+    "query": "Compare Relational Databases with Vector Databases.",
+    "document": "database_architectures.pdf",
+    "relevant_chunk_ids": ["doc_db::c1::relational", "doc_db::c2::vector"],
+    "expected_pages": [1, 2],
+    "expected_passages": ["RDBMS stores structured tables with B-Trees and ACID transactions; vector DBs index high-dimensional embeddings using HNSW"],
+    "expected_answer_characteristics": "Exact SQL filtering vs approximate nearest neighbors (ANN)."
+  },
+  {
+    "id": "rag_037",
+    "category": "comparison",
+    "query": "What is the difference between autoregressive and masked language models?",
+    "document": "transformer_architecture.pdf",
+    "relevant_chunk_ids": ["doc_trans::c7::causal_masked"],
+    "expected_pages": [7],
+    "expected_passages": ["Autoregressive models (GPT) use causal masks for generation; masked models (BERT) use bidirectional context"],
+    "expected_answer_characteristics": "Left-to-right causal vs bidirectional context."
+  },
+  {
+    "id": "rag_038",
+    "category": "comparison",
+    "query": "Compare cross-encoder and bi-encoder architectures for retrieval.",
+    "document": "search_algorithms.pdf",
+    "relevant_chunk_ids": ["doc_search::c4::cross_bi"],
+    "expected_pages": [4],
+    "expected_passages": ["Bi-encoders encode queries and docs separately for fast vector search; cross-encoders process full pairs with joint self-attention"],
+    "expected_answer_characteristics": "Latency and indexability vs accuracy and cross-attention."
+  },
+  {
+    "id": "rag_039",
+    "category": "comparison",
+    "query": "Compare precision and recall in medical diagnostics.",
+    "document": "evaluation_metrics.pdf",
+    "relevant_chunk_ids": ["doc_eval::c2::prec_recall"],
+    "expected_pages": [2],
+    "expected_passages": ["In medicine, recall minimizes false negatives to catch all diseased cases, while precision avoids false alarms"],
+    "expected_answer_characteristics": "Sensitivity to diseased cases vs specificity."
+  },
+  {
+    "id": "rag_040",
+    "category": "comparison",
+    "query": "Compare process threads and operating system processes.",
+    "document": "operating_systems.pdf",
+    "relevant_chunk_ids": ["doc_os::c1::processes_threads"],
+    "expected_pages": [1],
+    "expected_passages": ["Processes have isolated address spaces; threads share code, data, and heap within a single process"],
+    "expected_answer_characteristics": "Memory isolation vs shared virtual address space."
+  },
+  {
+    "id": "rag_041",
+    "category": "equation",
+    "query": "What is the equation for softmax activation?",
+    "document": "deep_learning_optimization.pdf",
+    "relevant_chunk_ids": ["doc_opt::c4::loss"],
+    "expected_pages": [4],
+    "expected_passages": ["Softmax(z_i) = exp(z_i) / sum_j exp(z_j)"],
+    "expected_answer_characteristics": "Exponentiation divided by partition sum."
+  },
+  {
+    "id": "rag_042",
+    "category": "equation",
+    "query": "State Bayes' theorem formula and explain the terms.",
+    "document": "machine_learning_basics.pdf",
+    "relevant_chunk_ids": ["doc_ml::c5::bayes"],
+    "expected_pages": [5],
+    "expected_passages": ["P(A|B) = [P(B|A) * P(A)] / P(B) where P(A) is prior, P(B|A) is likelihood"],
+    "expected_answer_characteristics": "Prior, likelihood, marginal evidence, posterior."
+  },
+  {
+    "id": "rag_043",
+    "category": "equation",
+    "query": "What is the Reciprocal Rank Fusion formula?",
+    "document": "search_algorithms.pdf",
+    "relevant_chunk_ids": ["doc_search::c1::rrf"],
+    "expected_pages": [1],
+    "expected_passages": ["RRF_score(d) = sum_{m in M} 1 / (k + rank_m(d)) where k is usually 60"],
+    "expected_answer_characteristics": "Sum of 1 / (k + rank)."
+  },
+  {
+    "id": "rag_044",
+    "category": "equation",
+    "query": "What is the cosine similarity equation between vectors u and v?",
+    "document": "search_algorithms.pdf",
+    "relevant_chunk_ids": ["doc_search::c5::cosine"],
+    "expected_pages": [5],
+    "expected_passages": ["CosineSimilarity(u, v) = (u . v) / (||u|| * ||v||)"],
+    "expected_answer_characteristics": "Dot product divided by the product of Euclidean norms."
+  },
+  {
+    "id": "rag_045",
+    "category": "equation",
+    "query": "What is the first law of thermodynamics equation for closed systems?",
+    "document": "thermodynamics.pdf",
+    "relevant_chunk_ids": ["doc_thermo::c4::first_law"],
+    "expected_pages": [4],
+    "expected_passages": ["Delta U = Q - W where Delta U is internal energy change, Q is heat added, W is work done"],
+    "expected_answer_characteristics": "Delta U = Q - W."
+  },
+  {
+    "id": "rag_046",
+    "category": "equation",
+    "query": "State the scaled dot-product attention equation in Transformers.",
+    "document": "transformer_architecture.pdf",
+    "relevant_chunk_ids": ["doc_trans::c1::attention"],
+    "expected_pages": [1],
+    "expected_passages": ["Attention(Q, K, V) = softmax((Q * K^T) / sqrt(d_k)) * V"],
+    "expected_answer_characteristics": "Q K transpose divided by square root of d_k multiplied by V."
+  },
+  {
+    "id": "rag_047",
+    "category": "equation",
+    "query": "What is the formula for Shannon entropy of discrete probability distribution P?",
+    "document": "machine_learning_basics.pdf",
+    "relevant_chunk_ids": ["doc_ml::c6::shannon_entropy"],
+    "expected_pages": [6],
+    "expected_passages": ["H(P) = - sum_i P(x_i) * log2(P(x_i))"],
+    "expected_answer_characteristics": "Negative sum of p log p."
+  },
+  {
+    "id": "rag_048",
+    "category": "equation",
+    "query": "What is the Euclidean distance equation between points p and q in n dimensions?",
+    "document": "search_algorithms.pdf",
+    "relevant_chunk_ids": ["doc_search::c6::euclidean"],
+    "expected_pages": [6],
+    "expected_passages": ["d(p, q) = sqrt( sum_{i=1}^n (p_i - q_i)^2 )"],
+    "expected_answer_characteristics": "Square root of sum of squared coordinate differences."
+  },
+  {
+    "id": "rag_049",
+    "category": "equation",
+    "query": "What is the F1 score formula in terms of precision and recall?",
+    "document": "evaluation_metrics.pdf",
+    "relevant_chunk_ids": ["doc_eval::c2::prec_recall"],
+    "expected_pages": [2],
+    "expected_passages": ["F1 = 2 * (Precision * Recall) / (Precision + Recall)"],
+    "expected_answer_characteristics": "Harmonic mean of precision and recall."
+  },
+  {
+    "id": "rag_050",
+    "category": "equation",
+    "query": "What is the exponential moving average update equation?",
+    "document": "deep_learning_optimization.pdf",
+    "relevant_chunk_ids": ["doc_opt::c7::ema"],
+    "expected_pages": [7],
+    "expected_passages": ["EMA_t = alpha * x_t + (1 - alpha) * EMA_{t-1}"],
+    "expected_answer_characteristics": "Alpha weighted current observation plus (1 - alpha) prior EMA."
+  },
+  {
+    "id": "rag_051",
+    "category": "page_specific",
+    "query": "According to page 3 of deep_learning_optimization.pdf, what is AdamW?",
+    "document": "deep_learning_optimization.pdf",
+    "relevant_chunk_ids": ["doc_opt::c3::adamw"],
+    "expected_pages": [3],
+    "expected_passages": ["AdamW decouples weight decay from gradient updates"],
+    "expected_answer_characteristics": "References page 3 specifically."
+  },
+  {
+    "id": "rag_052",
+    "category": "page_specific",
+    "query": "What is discussed on page 1 of search_algorithms.pdf?",
+    "document": "search_algorithms.pdf",
+    "relevant_chunk_ids": ["doc_search::c1::rrf"],
+    "expected_pages": [1],
+    "expected_passages": ["Reciprocal Rank Fusion (RRF) is an algorithm to combine ranked lists"],
+    "expected_answer_characteristics": "Covers RRF on page 1."
+  },
+  {
+    "id": "rag_053",
+    "category": "page_specific",
+    "query": "What does page 4 of evaluation_metrics.pdf say about ROUGE-L?",
+    "document": "evaluation_metrics.pdf",
+    "relevant_chunk_ids": ["doc_eval::c4::rouge"],
+    "expected_pages": [4],
+    "expected_passages": ["ROUGE-L evaluates the longest common subsequence"],
+    "expected_answer_characteristics": "Identifies page 4 content."
+  },
+  {
+    "id": "rag_054",
+    "category": "page_specific",
+    "query": "What equation appears on page 1 of transformer_architecture.pdf?",
+    "document": "transformer_architecture.pdf",
+    "relevant_chunk_ids": ["doc_trans::c1::attention"],
+    "expected_pages": [1],
+    "expected_passages": ["Attention(Q, K, V) = softmax((Q * K^T) / sqrt(d_k)) * V"],
+    "expected_answer_characteristics": "Scaled dot-product attention."
+  },
+  {
+    "id": "rag_055",
+    "category": "page_specific",
+    "query": "What does page 2 of thermodynamics.pdf say about the second law?",
+    "document": "thermodynamics.pdf",
+    "relevant_chunk_ids": ["doc_thermo::c2::second_law"],
+    "expected_pages": [2],
+    "expected_passages": ["Heat cannot spontaneously flow from a colder body to a hotter body"],
+    "expected_answer_characteristics": "Clausius statement on page 2."
+  },
+  {
+    "id": "rag_056",
+    "category": "page_specific",
+    "query": "Explain what is on page 5 of neural_networks_intro.pdf.",
+    "document": "neural_networks_intro.pdf",
+    "relevant_chunk_ids": ["doc_nn::c5::residuals"],
+    "expected_pages": [5],
+    "expected_passages": ["Skip connections allow gradients to flow directly through identity mappings"],
+    "expected_answer_characteristics": "Residual connections on page 5."
+  },
+  {
+    "id": "rag_057",
+    "category": "page_specific",
+    "query": "On page 1 of operating_systems.pdf, what distinguishes threads from processes?",
+    "document": "operating_systems.pdf",
+    "relevant_chunk_ids": ["doc_os::c1::processes_threads"],
+    "expected_pages": [1],
+    "expected_passages": ["Processes have isolated address spaces; threads share code and heap"],
+    "expected_answer_characteristics": "Page 1 OS definitions."
+  },
+  {
+    "id": "rag_058",
+    "category": "page_specific",
+    "query": "What is on page 2 of nlp_tokenization.pdf regarding byte pair encoding?",
+    "document": "nlp_tokenization.pdf",
+    "relevant_chunk_ids": ["doc_nlp::c2::tiktoken"],
+    "expected_pages": [2],
+    "expected_passages": ["Tiktoken uses Byte Pair Encoding on UTF-8 bytes"],
+    "expected_answer_characteristics": "Page 2 tokenization."
+  },
+  {
+    "id": "rag_059",
+    "category": "page_specific",
+    "query": "According to page 3 of machine_learning_basics.pdf, how does regularization work?",
+    "document": "machine_learning_basics.pdf",
+    "relevant_chunk_ids": ["doc_ml::c3::regularization"],
+    "expected_pages": [3],
+    "expected_passages": ["Regularization penalizes model complexity to curb overfitting"],
+    "expected_answer_characteristics": "Regularization on page 3."
+  },
+  {
+    "id": "rag_060",
+    "category": "page_specific",
+    "query": "What is covered on page 2 of distributed_training.pdf?",
+    "document": "distributed_training.pdf",
+    "relevant_chunk_ids": ["doc_dist::c2::allreduce"],
+    "expected_pages": [2],
+    "expected_passages": ["Ring-AllReduce accumulates gradients across nodes with bandwidth-optimal peer-to-peer ring communication"],
+    "expected_answer_characteristics": "AllReduce on page 2."
+  },
+  {
+    "id": "rag_061",
+    "category": "multi_passage",
+    "query": "Summarize the end-to-end pipeline of training a Transformer model.",
+    "document": "transformer_architecture.pdf",
+    "relevant_chunk_ids": ["doc_trans::c1::attention", "doc_trans::c3::layernorm", "doc_trans::c4::schedules"],
+    "expected_pages": [1, 3, 4],
+    "expected_passages": ["Self-attention computes pairwise similarities", "LayerNorm computes statistics", "Warmup stabilizes attention matrices"],
+    "expected_answer_characteristics": "Requires synthesizing attention, normalization, and schedules."
+  },
+  {
+    "id": "rag_062",
+    "category": "multi_passage",
+    "query": "Explain how optimization and loss functions interact during gradient descent.",
+    "document": "deep_learning_optimization.pdf",
+    "relevant_chunk_ids": ["doc_opt::c1::autograd", "doc_opt::c3::adamw", "doc_opt::c4::loss"],
+    "expected_pages": [1, 3, 4],
+    "expected_passages": ["autograd computes automatic differentiation", "CrossEntropyLoss combines LogSoftmax", "AdamW decouples weight decay"],
+    "expected_answer_characteristics": "Synthesizes autograd, loss computation, and parameter update."
+  },
+  {
+    "id": "rag_063",
+    "category": "multi_passage",
+    "query": "Synthesize the core evaluation metrics for classification and generative NLP.",
+    "document": "evaluation_metrics.pdf",
+    "relevant_chunk_ids": ["doc_eval::c1::roc", "doc_eval::c2::prec_recall", "doc_eval::c3::bleu", "doc_eval::c4::rouge"],
+    "expected_pages": [1, 2, 3, 4],
+    "expected_passages": ["ROC-AUC measures discrimination", "F1 is harmonic mean", "BLEU measures n-gram precision", "ROUGE-L evaluates longest common subsequence"],
+    "expected_answer_characteristics": "Covers both classification and text generation metrics."
+  },
+  {
+    "id": "rag_064",
+    "category": "multi_passage",
+    "query": "How do entropy, heat, and internal energy relate across the thermodynamic laws?",
+    "document": "thermodynamics.pdf",
+    "relevant_chunk_ids": ["doc_thermo::c1::entropy", "doc_thermo::c2::second_law", "doc_thermo::c4::first_law"],
+    "expected_pages": [1, 2, 4],
+    "expected_passages": ["Entropy measures microscopic disorder", "Heat cannot spontaneously flow cold to hot", "Delta U = Q - W"],
+    "expected_answer_characteristics": "Integrates First Law, Second Law, and microscopic entropy."
+  },
+  {
+    "id": "rag_065",
+    "category": "multi_passage",
+    "query": "Explain hybrid search retrieval from chunk indexing to score fusion and reranking.",
+    "document": "search_algorithms.pdf",
+    "relevant_chunk_ids": ["doc_search::c1::rrf", "doc_search::c2::bm25", "doc_search::c4::cross_bi"],
+    "expected_pages": [1, 2, 4],
+    "expected_passages": ["BM25 is a ranking function", "Reciprocal Rank Fusion combines ranked lists", "Cross-encoders process full pairs with joint self-attention"],
+    "expected_answer_characteristics": "Full search architecture from BM25 + dense to RRF to cross-encoder."
+  },
+  {
+    "id": "rag_066",
+    "category": "multi_passage",
+    "query": "Synthesize the bias-variance tradeoff, overfitting, and regularization methods.",
+    "document": "machine_learning_basics.pdf",
+    "relevant_chunk_ids": ["doc_ml::c1::paradigms", "doc_ml::c3::regularization", "doc_ml::c4::l1_l2"],
+    "expected_pages": [1, 3, 4],
+    "expected_passages": ["Supervised learning trains on labeled pairs", "Regularization penalizes complexity", "L1 produces sparsity, L2 shrinks smoothly"],
+    "expected_answer_characteristics": "Connects generalization error to regularizers."
+  },
+  {
+    "id": "rag_067",
+    "category": "multi_passage",
+    "query": "How do CNNs, RNNs, and ResNets solve gradient propagation in deep architectures?",
+    "document": "neural_networks_intro.pdf",
+    "relevant_chunk_ids": ["doc_nn::c2::backprop", "doc_nn::c4::vanishing", "doc_nn::c5::residuals"],
+    "expected_pages": [2, 4, 5],
+    "expected_passages": ["Backpropagation applies chain rule", "Saturating activations shrink gradients", "Skip connections allow direct identity flow"],
+    "expected_answer_characteristics": "Traces gradient flow through convolution, recurrence, and skip connections."
+  },
+  {
+    "id": "rag_068",
+    "category": "multi_passage",
+    "query": "Explain how distributed training combines data parallelism, Ring-AllReduce, and gradient clipping.",
+    "document": "distributed_training.pdf",
+    "relevant_chunk_ids": ["doc_dist::c1::data_parallel", "doc_dist::c2::allreduce", "doc_opt::c5::clipping"],
+    "expected_pages": [1, 2],
+    "expected_passages": ["Ring-AllReduce accumulates gradients across nodes", "Scaling gradient vector by threshold / ||g||"],
+    "expected_answer_characteristics": "Multi-GPU optimization workflow."
+  },
+  {
+    "id": "rag_069",
+    "category": "multi_passage",
+    "query": "Synthesize how VQ-VAE and discrete codebooks prevent latent collapse.",
+    "document": "generative_models.pdf",
+    "relevant_chunk_ids": ["doc_gen::c1::vae_collapse", "doc_gen::c3::vqvae"],
+    "expected_pages": [1, 3],
+    "expected_passages": ["Standard VAE posterior collapse", "Discrete codebook embeddings bound capacity"],
+    "expected_answer_characteristics": "Contrasts generative mechanisms across multiple sections."
+  },
+  {
+    "id": "rag_070",
+    "category": "multi_passage",
+    "query": "How do processes, threads, and memory paging interact in an operating system?",
+    "document": "operating_systems.pdf",
+    "relevant_chunk_ids": ["doc_os::c1::processes_threads", "doc_os::c3::paging"],
+    "expected_pages": [1, 3],
+    "expected_passages": ["Processes have isolated address spaces", "Paging divides virtual memory into fixed blocks"],
+    "expected_answer_characteristics": "Synthesizes execution units with memory management."
+  },
+  {
+    "id": "rag_071",
+    "category": "no_evidence",
+    "query": "What is the capital city of Mars?",
+    "document": "unrelated",
+    "relevant_chunk_ids": [],
+    "expected_pages": [],
+    "expected_passages": [],
+    "expected_answer_characteristics": "Negative example: must report that evidence is not found in course notes."
+  },
+  {
+    "id": "rag_072",
+    "category": "no_evidence",
+    "query": "How do you bake a chocolate chip sourdough bread?",
+    "document": "unrelated",
+    "relevant_chunk_ids": [],
+    "expected_pages": [],
+    "expected_passages": [],
+    "expected_answer_characteristics": "Negative example: ungrounded culinary question."
+  },
+  {
+    "id": "rag_073",
+    "category": "no_evidence",
+    "query": "Who won the FIFA World Cup in 1994?",
+    "document": "unrelated",
+    "relevant_chunk_ids": [],
+    "expected_pages": [],
+    "expected_passages": [],
+    "expected_answer_characteristics": "Negative example: sports history absent from academic notes."
+  },
+  {
+    "id": "rag_074",
+    "category": "no_evidence",
+    "query": "What is the airspeed velocity of an unladen swallow?",
+    "document": "unrelated",
+    "relevant_chunk_ids": [],
+    "expected_pages": [],
+    "expected_passages": [],
+    "expected_answer_characteristics": "Negative example: fictional quote with no course notes."
+  },
+  {
+    "id": "rag_075",
+    "category": "no_evidence",
+    "query": "What are the rules of cricket and LBW decisions?",
+    "document": "unrelated",
+    "relevant_chunk_ids": [],
+    "expected_pages": [],
+    "expected_passages": [],
+    "expected_answer_characteristics": "Negative example: absent from notes."
+  },
+  {
+    "id": "rag_076",
+    "category": "no_evidence",
+    "query": "Explain how to replace brake pads on a 2018 Honda Civic.",
+    "document": "unrelated",
+    "relevant_chunk_ids": [],
+    "expected_pages": [],
+    "expected_passages": [],
+    "expected_answer_characteristics": "Negative example: auto repair not in syllabus."
+  },
+  {
+    "id": "rag_077",
+    "category": "no_evidence",
+    "query": "What is the stock price of Apple right now?",
+    "document": "unrelated",
+    "relevant_chunk_ids": [],
+    "expected_pages": [],
+    "expected_passages": [],
+    "expected_answer_characteristics": "Negative example: real-time financial data."
+  },
+  {
+    "id": "rag_078",
+    "category": "no_evidence",
+    "query": "What is the best shampoo for curly hair?",
+    "document": "unrelated",
+    "relevant_chunk_ids": [],
+    "expected_pages": [],
+    "expected_passages": [],
+    "expected_answer_characteristics": "Negative example: cosmetics question."
+  },
+  {
+    "id": "rag_079",
+    "category": "no_evidence",
+    "query": "How many moons does Jupiter have according to 2024 astronomical data?",
+    "document": "unrelated",
+    "relevant_chunk_ids": [],
+    "expected_pages": [],
+    "expected_passages": [],
+    "expected_answer_characteristics": "Negative example: astrophysics not in notes."
+  },
+  {
+    "id": "rag_080",
+    "category": "no_evidence",
+    "query": "Tell me a fairy tale about a dragon and a wizard.",
+    "document": "unrelated",
+    "relevant_chunk_ids": [],
+    "expected_pages": [],
+    "expected_passages": [],
+    "expected_answer_characteristics": "Negative example: creative fiction."
+  },
+  {
+    "id": "rag_081",
+    "category": "ambiguous",
+    "query": "Explain the model.",
+    "document": "machine_learning_basics.pdf",
+    "relevant_chunk_ids": ["doc_ml::c1::paradigms"],
+    "expected_pages": [1],
+    "expected_passages": ["Supervised learning trains on labeled input-output pairs"],
+    "expected_answer_characteristics": "Under-specified query requiring clarification or default overview."
+  },
+  {
+    "id": "rag_082",
+    "category": "ambiguous",
+    "query": "Tell me about layers.",
+    "document": "neural_networks_intro.pdf",
+    "relevant_chunk_ids": ["doc_nn::c1::cnn", "doc_trans::c3::layernorm"],
+    "expected_pages": [1, 3],
+    "expected_passages": ["CNNs use spatial convolution", "LayerNorm computes statistics across hidden features"],
+    "expected_answer_characteristics": "Could refer to neural network layers or normalization."
+  },
+  {
+    "id": "rag_083",
+    "category": "ambiguous",
+    "query": "What is the formula?",
+    "document": "deep_learning_optimization.pdf",
+    "relevant_chunk_ids": ["doc_opt::c4::loss"],
+    "expected_pages": [4],
+    "expected_passages": ["Softmax(z_i) = exp(z_i) / sum_j exp(z_j)"],
+    "expected_answer_characteristics": "Missing target equation."
+  },
+  {
+    "id": "rag_084",
+    "category": "ambiguous",
+    "query": "How does it work?",
+    "document": "transformer_architecture.pdf",
+    "relevant_chunk_ids": ["doc_trans::c1::attention"],
+    "expected_pages": [1],
+    "expected_passages": ["Self-attention computes pairwise query-key similarities"],
+    "expected_answer_characteristics": "Pronoun without referent."
+  },
+  {
+    "id": "rag_085",
+    "category": "ambiguous",
+    "query": "Why does it fail?",
+    "document": "neural_networks_intro.pdf",
+    "relevant_chunk_ids": ["doc_nn::c4::vanishing"],
+    "expected_pages": [4],
+    "expected_passages": ["Saturating activations shrink gradients exponentially"],
+    "expected_answer_characteristics": "Ambiguous failure mode."
+  },
+  {
+    "id": "rag_086",
+    "category": "ambiguous",
+    "query": "Explain the parameters.",
+    "document": "search_algorithms.pdf",
+    "relevant_chunk_ids": ["doc_search::c2::bm25"],
+    "expected_pages": [2],
+    "expected_passages": ["BM25 parameters k1 controls term frequency saturation and b controls document length normalization"],
+    "expected_answer_characteristics": "Could refer to k1, b or learning parameters."
+  },
+  {
+    "id": "rag_087",
+    "category": "ambiguous",
+    "query": "What is the difference?",
+    "document": "operating_systems.pdf",
+    "relevant_chunk_ids": ["doc_os::c1::processes_threads"],
+    "expected_pages": [1],
+    "expected_passages": ["Processes have isolated address spaces; threads share memory"],
+    "expected_answer_characteristics": "Incomplete comparison."
+  },
+  {
+    "id": "rag_088",
+    "category": "ambiguous",
+    "query": "What is the score?",
+    "document": "evaluation_metrics.pdf",
+    "relevant_chunk_ids": ["doc_eval::c2::prec_recall"],
+    "expected_pages": [2],
+    "expected_passages": ["F1 = 2 * (Precision * Recall) / (Precision + Recall)"],
+    "expected_answer_characteristics": "Vague metric inquiry."
+  },
+  {
+    "id": "rag_089",
+    "category": "ambiguous",
+    "query": "How do you optimize it?",
+    "document": "deep_learning_optimization.pdf",
+    "relevant_chunk_ids": ["doc_opt::c3::adamw"],
+    "expected_pages": [3],
+    "expected_passages": ["AdamW decouples weight decay from gradient updates"],
+    "expected_answer_characteristics": "Ambiguous optimization goal."
+  },
+  {
+    "id": "rag_090",
+    "category": "ambiguous",
+    "query": "What is on the page?",
+    "document": "thermodynamics.pdf",
+    "relevant_chunk_ids": ["doc_thermo::c1::entropy"],
+    "expected_pages": [1],
+    "expected_passages": ["Entropy is a measure of microscopic disorder"],
+    "expected_answer_characteristics": "Unspecified page reference."
+  },
+  {
+    "id": "rag_091",
+    "category": "technical_document",
+    "query": "According to the OS notes, what is virtual memory paging?",
+    "document": "operating_systems.pdf",
+    "relevant_chunk_ids": ["doc_os::c3::paging"],
+    "expected_pages": [3],
+    "expected_passages": ["Paging is a memory management scheme that eliminates contiguous allocation using fixed-size blocks called pages and frames"],
+    "expected_answer_characteristics": "Virtual to physical address translation, pages and frames."
+  },
+  {
+    "id": "rag_092",
+    "category": "technical_document",
+    "query": "How do semaphore P (wait) and V (signal) operations prevent race conditions?",
+    "document": "operating_systems.pdf",
+    "relevant_chunk_ids": ["doc_os::c4::semaphores"],
+    "expected_pages": [4],
+    "expected_passages": ["P decrements the semaphore counter, blocking if negative; V increments and unblocks waiting threads atomically"],
+    "expected_answer_characteristics": "Atomic increment/decrement and mutual exclusion."
+  },
+  {
+    "id": "rag_093",
+    "category": "technical_document",
+    "query": "What causes deadlocks in concurrent systems according to Coffman conditions?",
+    "document": "operating_systems.pdf",
+    "relevant_chunk_ids": ["doc_os::c5::deadlock"],
+    "expected_pages": [5],
+    "expected_passages": ["The four Coffman conditions are mutual exclusion, hold and wait, no preemption, and circular wait"],
+    "expected_answer_characteristics": "Lists the four Coffman conditions."
+  },
+  {
+    "id": "rag_094",
+    "category": "technical_document",
+    "query": "What is the time complexity of QuickSort in best, average, and worst cases?",
+    "document": "algorithms.md",
+    "relevant_chunk_ids": ["doc_algo::c2::quicksort"],
+    "expected_pages": [1],
+    "expected_passages": ["QuickSort is O(n log n) best and average, and O(n^2) worst case when poorly pivoted"],
+    "expected_answer_characteristics": "O(n log n) vs O(n^2)."
+  },
+  {
+    "id": "rag_095",
+    "category": "technical_document",
+    "query": "How does Dijkstra's algorithm find shortest paths in non-negative weighted graphs?",
+    "document": "graph_algorithms.pdf",
+    "relevant_chunk_ids": ["doc_graph::c3::dijkstra"],
+    "expected_pages": [3],
+    "expected_passages": ["Dijkstra maintains a priority queue of tentative distances, greedily expanding the closest unvisited vertex"],
+    "expected_answer_characteristics": "Priority queue and greedy relaxation."
+  },
+  {
+    "id": "rag_096",
+    "category": "technical_document",
+    "query": "What is the ACID principle in database transaction processing?",
+    "document": "database_architectures.pdf",
+    "relevant_chunk_ids": ["doc_db::c1::relational"],
+    "expected_pages": [1],
+    "expected_passages": ["ACID stands for Atomicity, Consistency, Isolation, and Durability guaranteeing reliable transactions"],
+    "expected_answer_characteristics": "Atomicity, Consistency, Isolation, Durability."
+  },
+  {
+    "id": "rag_097",
+    "category": "technical_document",
+    "query": "Explain how write-ahead logging (WAL) guarantees database durability.",
+    "document": "database_architectures.pdf",
+    "relevant_chunk_ids": ["doc_db::c3::wal"],
+    "expected_pages": [3],
+    "expected_passages": ["Changes are appended to the WAL on non-volatile disk before dirty pages are flushed to table files"],
+    "expected_answer_characteristics": "Log-before-data flush and crash recovery."
+  },
+  {
+    "id": "rag_098",
+    "category": "technical_document",
+    "query": "What is the purpose of inverted index in full-text search engines?",
+    "document": "search_algorithms.pdf",
+    "relevant_chunk_ids": ["doc_search::c2::bm25"],
+    "expected_pages": [2],
+    "expected_passages": ["An inverted index maps every unique token to a posting list containing document IDs and term positions"],
+    "expected_answer_characteristics": "Term-to-document posting list mapping."
+  },
+  {
+    "id": "rag_099",
+    "category": "technical_document",
+    "query": "How does B-Tree indexing ensure balanced search and logarithmic depth?",
+    "document": "database_architectures.pdf",
+    "relevant_chunk_ids": ["doc_db::c4::btree"],
+    "expected_pages": [4],
+    "expected_passages": ["B-Trees maintain all leaf nodes at identical depth, splitting overflowing nodes and merging underflowing ones"],
+    "expected_answer_characteristics": "Self-balancing multi-way tree with O(log n) lookups."
+  },
+  {
+    "id": "rag_100",
+    "category": "technical_document",
+    "query": "What is the difference between CPU cache coherence protocols like MESI?",
+    "document": "operating_systems.pdf",
+    "relevant_chunk_ids": ["doc_os::c6::mesi"],
+    "expected_pages": [6],
+    "expected_passages": ["MESI maintains cache line states Modified, Exclusive, Shared, and Invalid across processor cores via bus snooping"],
+    "expected_answer_characteristics": "Modified, Exclusive, Shared, Invalid states and snooping."
+  }
+]

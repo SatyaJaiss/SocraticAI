@@ -17,8 +17,16 @@ def store(settings) -> VectorStore:
 
 def _chunks() -> list[dict]:
     return [
-        {"text": "Photosynthesis converts sunlight into chemical energy.", "page": 1, "source": "bio.txt"},
-        {"text": "The water cycle describes evaporation and precipitation.", "page": 2, "source": "bio.txt"},
+        {
+            "text": "Photosynthesis converts sunlight into chemical energy.",
+            "page": 1,
+            "source": "bio.txt",
+        },
+        {
+            "text": "The water cycle describes evaporation and precipitation.",
+            "page": 2,
+            "source": "bio.txt",
+        },
         {"text": "Newton's laws describe the motion of objects.", "page": 3, "source": "phys.txt"},
     ]
 

@@ -24,6 +24,7 @@ class DocumentRepository(BaseRepository):
         filename: str,
         filepath: str = "",
         status: str = DocumentStatus.UPLOADED.value,
+        content_hash: str | None = None,
     ) -> DocumentRecord:
         now = utc_now_iso()
         with self.session() as session:
@@ -34,6 +35,7 @@ class DocumentRepository(BaseRepository):
                 filepath=filepath,
                 status=status,
                 chunk_count=0,
+                content_hash=content_hash,
                 created_at=now,
             )
             session.add(row)
@@ -46,6 +48,21 @@ class DocumentRepository(BaseRepository):
             row = session.get(Document, document_id)
             return self._to_record(row) if row else None
 
+    def find_by_content_hash(self, student_id: str, content_hash: str) -> DocumentRecord | None:
+        """Find an existing document for this student with matching content hash."""
+        with self.session() as session:
+            row = (
+                session.execute(
+                    select(Document).where(
+                        Document.student_id == student_id,
+                        Document.content_hash == content_hash,
+                    )
+                )
+                .scalars()
+                .first()
+            )
+            return self._to_record(row) if row else None
+
     def get_or_404(self, document_id: str) -> DocumentRecord:
         record = self.get(document_id)
         if record is None:
@@ -54,20 +71,22 @@ class DocumentRepository(BaseRepository):
 
     def list_for_student(self, student_id: str, limit: int = 100) -> list[DocumentRecord]:
         with self.session() as session:
-            rows = session.execute(
-                select(Document)
-                .where(Document.student_id == student_id)
-                .order_by(Document.created_at.desc())
-                .limit(limit)
-            ).scalars().all()
+            rows = (
+                session.execute(
+                    select(Document)
+                    .where(Document.student_id == student_id)
+                    .order_by(Document.created_at.desc())
+                    .limit(limit)
+                )
+                .scalars()
+                .all()
+            )
             return [self._to_record(r) for r in rows]
 
     def count_for_student(self, student_id: str) -> int:
         with self.session() as session:
             return session.execute(
-                select(func.count()).select_from(Document).where(
-                    Document.student_id == student_id
-                )
+                select(func.count()).select_from(Document).where(Document.student_id == student_id)
             ).scalar_one()
 
     # ------------------------------------------------------------ update --
@@ -100,5 +119,6 @@ class DocumentRepository(BaseRepository):
             filename=row.filename,
             status=row.status,
             chunk_count=row.chunk_count or 0,
+            content_hash=getattr(row, "content_hash", None),
             created_at=row.created_at,
         )

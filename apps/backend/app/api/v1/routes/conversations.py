@@ -105,4 +105,3 @@ async def delete_conversation(
         raise ResourceNotFoundError(f"Conversation {conversation_id!r} could not be deleted")
 
     return {"status": "deleted", "conversation_id": conversation_id}
-

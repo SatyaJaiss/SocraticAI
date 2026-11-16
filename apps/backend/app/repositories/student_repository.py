@@ -147,18 +147,20 @@ class StudentRepository(BaseRepository):
                 learned.append(topic)
                 student.topics_learned = learned
                 student.updated_at = utc_now_iso()
-            session.add(
-                Topic(student_id=student_id, name=topic, created_at=utc_now_iso())
-            )
+            session.add(Topic(student_id=student_id, name=topic, created_at=utc_now_iso()))
 
     def list_topics(self, student_id: str, limit: int = 100) -> list[str]:
         with self.session() as session:
-            rows = session.execute(
-                select(Topic.name)
-                .where(Topic.student_id == student_id)
-                .order_by(Topic.created_at.desc())
-                .limit(limit)
-            ).scalars().all()
+            rows = (
+                session.execute(
+                    select(Topic.name)
+                    .where(Topic.student_id == student_id)
+                    .order_by(Topic.created_at.desc())
+                    .limit(limit)
+                )
+                .scalars()
+                .all()
+            )
             return list(dict.fromkeys(rows))
 
     # --------------------------------------------------- concept scores --
@@ -196,15 +198,17 @@ class StudentRepository(BaseRepository):
 
     def list_concept_scores(self, student_id: str) -> list[ConceptScore]:
         with self.session() as session:
-            rows = session.execute(
-                select(ConceptScoreRow)
-                .where(ConceptScoreRow.student_id == student_id)
-                .order_by(ConceptScoreRow.proficiency.asc())
-            ).scalars().all()
-            return [
-                ConceptScore(
-                    concept=r.concept, proficiency=r.proficiency, attempts=r.attempts
+            rows = (
+                session.execute(
+                    select(ConceptScoreRow)
+                    .where(ConceptScoreRow.student_id == student_id)
+                    .order_by(ConceptScoreRow.proficiency.asc())
                 )
+                .scalars()
+                .all()
+            )
+            return [
+                ConceptScore(concept=r.concept, proficiency=r.proficiency, attempts=r.attempts)
                 for r in rows
             ]
 

@@ -37,9 +37,7 @@ class DemoLLMClient:
         self._settings = settings
 
     # ------------------------------------------------------------ generate --
-    async def generate(
-        self, system: str, user: str, *, temperature: float | None = None
-    ) -> str:
+    async def generate(self, system: str, user: str, *, temperature: float | None = None) -> str:
         return (
             f"Here is a concise, friendly explanation based on your message: "
             f"«{self._first_sentence(user)}» — in demo mode no live model is "
@@ -182,8 +180,7 @@ class DemoLLMClient:
                 f"Example 2: a step-by-step worked case for {topic}.",
             ],
             "analogies": [
-                f"Think of {topic} like learning to ride a bicycle — balance "
-                f"first, speed later.",
+                f"Think of {topic} like learning to ride a bicycle — balance first, speed later.",
             ],
             "recap": (
                 f"To master {topic}, remember the key idea, try the examples "
@@ -223,8 +220,7 @@ class DemoLLMClient:
                 base.update(
                     {
                         "question": (
-                            f"Using the basic rule for {topic}, compute the "
-                            f"value of 2 + 3."
+                            f"Using the basic rule for {topic}, compute the value of 2 + 3."
                         ),
                         "options": [],
                         "correct_answer": "5",

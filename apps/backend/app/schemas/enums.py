@@ -97,4 +97,3 @@ class ChatIntent(StrEnum):
     PRACTICE = "practice"
     UPLOAD = "upload"
     GENERAL = "general"
-

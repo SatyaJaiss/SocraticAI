@@ -54,11 +54,15 @@ class QuizRepository(BaseRepository):
             header = session.get(Quiz, quiz_id)
             if header is None:
                 return None
-            questions = session.execute(
-                select(QuizQuestion)
-                .where(QuizQuestion.quiz_id == quiz_id)
-                .order_by(QuizQuestion.id)
-            ).scalars().all()
+            questions = (
+                session.execute(
+                    select(QuizQuestion)
+                    .where(QuizQuestion.quiz_id == quiz_id)
+                    .order_by(QuizQuestion.id)
+                )
+                .scalars()
+                .all()
+            )
             return QuizSchema(
                 id=header.id,
                 topic=header.topic,
@@ -93,7 +97,9 @@ class QuizRepository(BaseRepository):
                     .where(Quiz.student_id == student_id)
                     .order_by(Quiz.created_at.desc())
                     .limit(limit)
-                ).scalars().all()
+                )
+                .scalars()
+                .all()
             )
 
     # ---------------------------------------------------------- attempts --
@@ -152,12 +158,16 @@ class QuizRepository(BaseRepository):
     def list_attempts(self, student_id: str, limit: int = 50) -> list[dict]:
         """Attempt history for the progress chart (chronological)."""
         with self.session() as session:
-            rows = session.execute(
-                select(QuizAttempt)
-                .where(QuizAttempt.student_id == student_id)
-                .order_by(QuizAttempt.created_at.asc())
-                .limit(limit)
-            ).scalars().all()
+            rows = (
+                session.execute(
+                    select(QuizAttempt)
+                    .where(QuizAttempt.student_id == student_id)
+                    .order_by(QuizAttempt.created_at.asc())
+                    .limit(limit)
+                )
+                .scalars()
+                .all()
+            )
             return [
                 {
                     "attempt_id": r.id,

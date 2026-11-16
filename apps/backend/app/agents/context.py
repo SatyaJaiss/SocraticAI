@@ -20,6 +20,7 @@ if TYPE_CHECKING:
     from app.cache.manager import CacheManager
     from app.context.builder import ContextBuilder
     from app.memory.manager import MemoryManager
+    from app.rag.citation.verifier import CitationVerifier
     from app.routing.intent_router import JevIntentRouter
 
 
@@ -41,4 +42,4 @@ class AgentContext:
     memory_manager: MemoryManager | None = None
     context_builder: ContextBuilder | None = None
     router: JevIntentRouter | None = None
-
+    citation_verifier: CitationVerifier | None = None

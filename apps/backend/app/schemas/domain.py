@@ -140,15 +140,76 @@ class Recommendation(BaseModel):
 
 
 # --------------------------------------------------------------------------- #
-# RAG
+# RAG & Citations
 # --------------------------------------------------------------------------- #
 class RetrievedChunk(BaseModel):
-    """A retrieved document fragment, with citation info."""
+    """A retrieved document fragment, with citation info and rich metadata."""
 
     content: str
     source: str
     page: int | None = None
     score: float = 0.0
+    chunk_id: str | None = None
+    document_id: str | None = None
+    student_id: str | None = None
+    document_title: str | None = None
+    section_title: str | None = None
+    section_path: str | None = None
+    chunk_index: int | None = None
+    content_hash: str | None = None
+    dense_score: float | None = None
+    bm25_score: float | None = None
+    rrf_score: float | None = None
+    reranker_score: float | None = None
+    relevance_score: float | None = None
+    created_at: str | None = None
+
+
+class Citation(BaseModel):
+    """A source citation referencing an ingested document chunk."""
+
+    document_id: str
+    source: str
+    page: int | None = None
+    chunk_id: str | None = None
+    section_title: str | None = None
+    claim: str = ""
+    cited_text: str = ""
+
+
+class VerifiedCitation(BaseModel):
+    """A verified citation with ownership, existence, and support checks."""
+
+    citation: Citation
+    is_valid: bool = True
+    ownership_verified: bool = True
+    page_verified: bool = True
+    support_score: float = 1.0
+    reason: str = ""
+
+
+class CitationVerificationResult(BaseModel):
+    """Overall outcome of the citation verification pipeline."""
+
+    citations: list[VerifiedCitation] = Field(default_factory=list)
+    all_valid: bool = True
+    citation_correctness: float = 1.0
+    citation_completeness: float = 1.0
+    unsupported_claim_count: int = 0
+
+
+class DecisionResult(BaseModel):
+    """Normalized decision result across TypeSafe Jev and Gemini Decisions API."""
+
+    decision_value: Any
+    confidence: float = 1.0
+    probabilities: dict[str, float] = Field(default_factory=dict)
+    rubric_level: str | None = None
+    provider: str
+    model: str
+    latency_ms: float = 0.0
+    usage: dict[str, Any] = Field(default_factory=dict)
+    raw_response: dict[str, Any] = Field(default_factory=dict)
 
 
 class RAGContext(BaseModel):
@@ -156,13 +217,15 @@ class RAGContext(BaseModel):
 
     retrieved_chunks: list[RetrievedChunk] = Field(default_factory=list)
     used: bool = False
+    verification: CitationVerificationResult | None = None
 
     def as_pretty_string(self) -> str:
         """Flatten chunks into a single labelled string for prompt injection."""
         parts = []
         for i, chunk in enumerate(self.retrieved_chunks, start=1):
             loc = f" (p.{chunk.page})" if chunk.page is not None else ""
-            parts.append(f"[{i}] Source: {chunk.source}{loc}\n{chunk.content}")
+            sec = f" [{chunk.section_title}]" if chunk.section_title else ""
+            parts.append(f"[{i}] Source: {chunk.source}{loc}{sec}\n{chunk.content}")
         return "\n\n".join(parts)
 
 
@@ -174,6 +237,7 @@ class DocumentRecord(BaseModel):
     filename: str
     status: str
     chunk_count: int = 0
+    content_hash: str | None = None
     created_at: str = ""
 
 
@@ -327,4 +391,3 @@ class ChatResponse(BaseModel):
     recommendations: Recommendation | None = None
     rag_sources: list[str] = Field(default_factory=list)
     messages: list[dict] = Field(default_factory=list)
-

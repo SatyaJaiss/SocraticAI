@@ -35,4 +35,3 @@ class BaseCacheBackend(ABC):
     @abstractmethod
     def stats(self) -> dict[str, int]:
         """Return operational metrics (hits, misses, evictions, current size)."""
-

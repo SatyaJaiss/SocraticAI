@@ -162,4 +162,3 @@ def decode_access_token(token: str, secret_key: str) -> dict[str, Any]:
         raise AuthenticationError("Token is missing subject claim ('sub')")
 
     return payload
-

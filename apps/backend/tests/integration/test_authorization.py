@@ -147,4 +147,3 @@ class TestAuthorizationBoundaries:
         )
         assert resp.status_code == 403
         assert resp.json()["error"] == "AUTHORIZATION_ERROR"
-

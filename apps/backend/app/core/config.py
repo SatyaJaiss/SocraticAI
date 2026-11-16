@@ -84,9 +84,7 @@ MAX_CHUNKS_PER_DOCUMENT = 2000
 class AppSettings(BaseSettings):
     """Application-level metadata and runtime behaviour."""
 
-    model_config = SettingsConfigDict(
-        env_prefix="APP_", extra="ignore", env_file=_ENV_FILE
-    )
+    model_config = SettingsConfigDict(env_prefix="APP_", extra="ignore", env_file=_ENV_FILE)
 
     name: str = "SocraticAI"
     version: str = "1.0.0"
@@ -110,9 +108,7 @@ class AppSettings(BaseSettings):
 class LLMSettings(BaseSettings):
     """LLM provider selection. Provider is ``openai``, ``gemini``, or ``demo``."""
 
-    model_config = SettingsConfigDict(
-        env_prefix="LLM_", extra="ignore", env_file=_ENV_FILE
-    )
+    model_config = SettingsConfigDict(env_prefix="LLM_", extra="ignore", env_file=_ENV_FILE)
 
     provider: str = "openai"
     openai_api_key: str = ""
@@ -128,9 +124,7 @@ class LLMSettings(BaseSettings):
 class DatabaseSettings(BaseSettings):
     """SQLAlchemy connection settings."""
 
-    model_config = SettingsConfigDict(
-        env_prefix="DATABASE_", extra="ignore", env_file=_ENV_FILE
-    )
+    model_config = SettingsConfigDict(env_prefix="DATABASE_", extra="ignore", env_file=_ENV_FILE)
 
     url: str = "sqlite:///./data/socraticai.db"
     echo: bool = False
@@ -140,9 +134,7 @@ class DatabaseSettings(BaseSettings):
 class VectorStoreSettings(BaseSettings):
     """ChromaDB + embedding model settings."""
 
-    model_config = SettingsConfigDict(
-        env_prefix="VECTOR_", extra="ignore", env_file=_ENV_FILE
-    )
+    model_config = SettingsConfigDict(env_prefix="VECTOR_", extra="ignore", env_file=_ENV_FILE)
 
     persist_directory: str = "./data/chroma"
     collection_name: str = "socraticai_notes"
@@ -155,9 +147,7 @@ class VectorStoreSettings(BaseSettings):
 class ApiSettings(BaseSettings):
     """REST API surface settings."""
 
-    model_config = SettingsConfigDict(
-        env_prefix="API_", extra="ignore", env_file=_ENV_FILE
-    )
+    model_config = SettingsConfigDict(env_prefix="API_", extra="ignore", env_file=_ENV_FILE)
 
     prefix: str = "/api/v1"
     upload_dir: str = "./data/uploads"
@@ -168,9 +158,7 @@ class ApiSettings(BaseSettings):
 class AuthSettings(BaseSettings):
     """Authentication and JWT token configuration."""
 
-    model_config = SettingsConfigDict(
-        env_prefix="AUTH_", extra="ignore", env_file=_ENV_FILE
-    )
+    model_config = SettingsConfigDict(env_prefix="AUTH_", extra="ignore", env_file=_ENV_FILE)
 
     secret_key: str = "socraticai-dev-insecure-secret-key-32b-min!!"
     algorithm: str = "HS256"
@@ -180,9 +168,7 @@ class AuthSettings(BaseSettings):
 class LoggingSettings(BaseSettings):
     """Centralised logging behaviour."""
 
-    model_config = SettingsConfigDict(
-        env_prefix="LOGGING_", extra="ignore", env_file=_ENV_FILE
-    )
+    model_config = SettingsConfigDict(env_prefix="LOGGING_", extra="ignore", env_file=_ENV_FILE)
 
     level: str = "INFO"
     json_format: bool = False
@@ -194,9 +180,7 @@ class LoggingSettings(BaseSettings):
 class FrontendSettings(BaseSettings):
     """Where the Streamlit dashboard reaches the API."""
 
-    model_config = SettingsConfigDict(
-        env_prefix="FRONTEND_", extra="ignore", env_file=_ENV_FILE
-    )
+    model_config = SettingsConfigDict(env_prefix="FRONTEND_", extra="ignore", env_file=_ENV_FILE)
 
     api_base_url: str = "http://localhost:8000"
 
@@ -217,9 +201,7 @@ class ConversationSettings(BaseSettings):
 class MemorySettings(BaseSettings):
     """Episodic and semantic memory configuration."""
 
-    model_config = SettingsConfigDict(
-        env_prefix="MEMORY_", extra="ignore", env_file=_ENV_FILE
-    )
+    model_config = SettingsConfigDict(env_prefix="MEMORY_", extra="ignore", env_file=_ENV_FILE)
 
     episodic_collection_name: str = "socraticai_episodic_memory"
     episodic_top_k: int = 4
@@ -232,9 +214,7 @@ class MemorySettings(BaseSettings):
 class RoutingSettings(BaseSettings):
     """Jev (TypeSafe AI) and deterministic routing configuration."""
 
-    model_config = SettingsConfigDict(
-        env_prefix="ROUTING_", extra="ignore", env_file=_ENV_FILE
-    )
+    model_config = SettingsConfigDict(env_prefix="ROUTING_", extra="ignore", env_file=_ENV_FILE)
 
     jev_enabled: bool = False
     jev_api_key: str = ""
@@ -249,9 +229,7 @@ class RoutingSettings(BaseSettings):
 class CachingSettings(BaseSettings):
     """Caching configuration for embeddings, retrieval, and LLM responses."""
 
-    model_config = SettingsConfigDict(
-        env_prefix="CACHE_", extra="ignore", env_file=_ENV_FILE
-    )
+    model_config = SettingsConfigDict(env_prefix="CACHE_", extra="ignore", env_file=_ENV_FILE)
 
     enabled: bool = True
     backend: str = "memory"
@@ -266,9 +244,7 @@ class CachingSettings(BaseSettings):
 class ContextBudgetSettings(BaseSettings):
     """Token budget allocations across prompt segments."""
 
-    model_config = SettingsConfigDict(
-        env_prefix="CONTEXT_", extra="ignore", env_file=_ENV_FILE
-    )
+    model_config = SettingsConfigDict(env_prefix="CONTEXT_", extra="ignore", env_file=_ENV_FILE)
 
     total_budget: int = 4000
     system_prompt_budget: int = 600
@@ -277,6 +253,95 @@ class ContextBudgetSettings(BaseSettings):
     semantic_profile_budget: int = 400
     rag_budget: int = 900
     tokenizer_encoding: str = "cl100k_base"
+
+
+class ChunkingSettings(BaseSettings):
+    """Document chunking and section-awareness settings."""
+
+    model_config = SettingsConfigDict(env_prefix="CHUNKING_", extra="ignore", env_file=_ENV_FILE)
+
+    chunk_size: int = 600
+    chunk_overlap: int = 100
+    strategy: str = "section_aware"  # "fixed", "section_aware"
+    max_section_size: int = 1200
+
+
+class BM25Settings(BaseSettings):
+    """BM25 lexical retrieval settings."""
+
+    model_config = SettingsConfigDict(env_prefix="BM25_", extra="ignore", env_file=_ENV_FILE)
+
+    enabled: bool = True
+    candidate_count: int = 10
+    index_dir: str = "./data/bm25_indices"
+    k1: float = 1.5
+    b: float = 0.75
+
+
+class HybridRetrievalSettings(BaseSettings):
+    """Hybrid retrieval (Dense + BM25 + Reciprocal Rank Fusion) settings."""
+
+    model_config = SettingsConfigDict(env_prefix="HYBRID_", extra="ignore", env_file=_ENV_FILE)
+
+    enabled: bool = True
+    rrf_k: int = 60
+    dense_candidates: int = 10
+    bm25_candidates: int = 10
+    final_top_k: int = 4
+
+
+class RerankerSettings(BaseSettings):
+    """Cross-Encoder reranking settings."""
+
+    model_config = SettingsConfigDict(env_prefix="RERANKER_", extra="ignore", env_file=_ENV_FILE)
+
+    enabled: bool = False
+    model_name: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    top_k: int = 4
+    max_length: int = 512
+    device: str = "auto"  # "auto", "cpu", "cuda"
+    batch_size: int = 16
+
+
+class DecisionModelSettings(BaseSettings):
+    """Unified decision-model settings for Jev and Gemini Decisions API."""
+
+    model_config = SettingsConfigDict(env_prefix="DECISION_", extra="ignore", env_file=_ENV_FILE)
+
+    primary_provider: str = "jev"  # "jev", "gemini_decisions", "shadow", "disabled"
+    fallback_provider: str = "disabled"
+    gemini_model: str = "gemini-decision-1"
+    gemini_api_key: str = ""
+    jev_model: str = "jev-latest"
+    jev_api_key: str = ""
+    timeout_seconds: float = 5.0
+    confidence_threshold: float = 0.65
+    relevance_threshold: float = 0.50
+    shadow_mode: bool = False
+    candidate_grading_limit: int = 6
+    relevance_gating_enabled: bool = False
+
+
+class CitationSettings(BaseSettings):
+    """Citation generation and verification pipeline settings."""
+
+    model_config = SettingsConfigDict(env_prefix="CITATION_", extra="ignore", env_file=_ENV_FILE)
+
+    enabled: bool = True
+    verification_threshold: float = 0.60
+    max_claims_per_verification: int = 8
+    require_ownership_check: bool = True
+
+
+class QueryRewritingSettings(BaseSettings):
+    """Query analysis and multi-part decomposition settings."""
+
+    model_config = SettingsConfigDict(
+        env_prefix="QUERY_REWRITE_", extra="ignore", env_file=_ENV_FILE
+    )
+
+    enabled: bool = True
+    max_subqueries: int = 3
 
 
 class Settings(BaseSettings):
@@ -302,6 +367,13 @@ class Settings(BaseSettings):
     routing: RoutingSettings = Field(default_factory=RoutingSettings)
     cache: CachingSettings = Field(default_factory=CachingSettings)
     context: ContextBudgetSettings = Field(default_factory=ContextBudgetSettings)
+    chunking: ChunkingSettings = Field(default_factory=ChunkingSettings)
+    bm25: BM25Settings = Field(default_factory=BM25Settings)
+    hybrid: HybridRetrievalSettings = Field(default_factory=HybridRetrievalSettings)
+    reranker: RerankerSettings = Field(default_factory=RerankerSettings)
+    decision: DecisionModelSettings = Field(default_factory=DecisionModelSettings)
+    citation: CitationSettings = Field(default_factory=CitationSettings)
+    query_rewrite: QueryRewritingSettings = Field(default_factory=QueryRewritingSettings)
     prompts_dir: Path = Field(default_factory=lambda: _PROJECT_ROOT / "configs" / "prompts")
 
 

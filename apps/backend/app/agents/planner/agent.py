@@ -93,9 +93,7 @@ class PlannerAgent:
                 }
             ]
             updates["lesson"] = None
-            logger.info(
-                "Planner routed %r -> %s (END, general reply)", user_input[:60], next_agent
-            )
+            logger.info("Planner routed %r -> %s (END, general reply)", user_input[:60], next_agent)
         else:
             logger.info(
                 "Planner routed %r -> %s (intent=%s, topic=%s)",

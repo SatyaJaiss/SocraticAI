@@ -80,4 +80,3 @@ async def get_me(
 ) -> StudentProfile:
     """Return the profile of the currently authenticated student."""
     return current_student
-

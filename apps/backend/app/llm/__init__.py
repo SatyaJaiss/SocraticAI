@@ -11,4 +11,3 @@ __all__ = [
     "get_prompt",
     "render_prompt",
 ]
-

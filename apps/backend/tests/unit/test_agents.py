@@ -25,16 +25,12 @@ class TestPlannerAgent:
 
     async def test_routes_question_to_answer(self, ctx):
         agent = PlannerAgent(ctx)
-        out = await agent.run(
-            {"student_id": "s1", "user_input": "what is the capital of France?"}
-        )
+        out = await agent.run({"student_id": "s1", "user_input": "what is the capital of France?"})
         assert out["next_agent"] == Routes.ANSWER_QUESTION
 
     async def test_routes_learn_to_teach(self, ctx):
         agent = PlannerAgent(ctx)
-        out = await agent.run(
-            {"student_id": "s1", "user_input": "teach me the water cycle"}
-        )
+        out = await agent.run({"student_id": "s1", "user_input": "teach me the water cycle"})
         assert out["next_agent"] == Routes.TEACH
 
     def test_route_mapping(self):
@@ -99,16 +95,28 @@ class TestEvaluationAgent:
             difficulty="beginner",
             questions=[
                 QuizQuestion(
-                    id="q1", type=QuestionType.MCQ, topic="Fractions",
-                    question="1/2 + 1/2?", options=["1", "2"], correct_answer="1",
+                    id="q1",
+                    type=QuestionType.MCQ,
+                    topic="Fractions",
+                    question="1/2 + 1/2?",
+                    options=["1", "2"],
+                    correct_answer="1",
                 ),
                 QuizQuestion(
-                    id="q2", type=QuestionType.NUMERICAL, topic="Fractions",
-                    question="1/4 + 1/4?", options=[], correct_answer="0.5",
+                    id="q2",
+                    type=QuestionType.NUMERICAL,
+                    topic="Fractions",
+                    question="1/4 + 1/4?",
+                    options=[],
+                    correct_answer="0.5",
                 ),
                 QuizQuestion(
-                    id="q3", type=QuestionType.SUBJECTIVE, topic="Fractions",
-                    question="Explain fractions?", options=[], correct_answer="Model answer",
+                    id="q3",
+                    type=QuestionType.SUBJECTIVE,
+                    topic="Fractions",
+                    question="Explain fractions?",
+                    options=[],
+                    correct_answer="Model answer",
                 ),
             ],
         )
@@ -172,7 +180,9 @@ class TestMemoryAgent:
             {
                 "student_id": "s5",
                 "user_input": "I love learning biology",
-                "messages": [{"role": "assistant", "content": "Great! Let's study cells.", "node": "teacher"}],
+                "messages": [
+                    {"role": "assistant", "content": "Great! Let's study cells.", "node": "teacher"}
+                ],
             }
         )
         assert out["memory_updates"]

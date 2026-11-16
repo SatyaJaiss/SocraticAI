@@ -12,6 +12,7 @@ import pytest
 from app.core.config import (
     ApiSettings,
     AppSettings,
+    BM25Settings,
     DatabaseSettings,
     LLMSettings,
     LoggingSettings,
@@ -42,6 +43,7 @@ def settings(tmp_path) -> Settings:
             embedding_model="fake",
         ),
         api=ApiSettings(upload_dir=str(tmp_path / "uploads")),
+        bm25=BM25Settings(index_dir=str(tmp_path / "bm25")),
         logging=LoggingSettings(log_dir=str(tmp_path / "logs")),
     )
 

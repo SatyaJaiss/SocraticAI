@@ -99,6 +99,89 @@ All variables can be overridden using environment variables or a `.env` file at 
 
 ---
 
+### 2.7 Advanced Chunking & Ingestion Settings (`ChunkingSettings`)
+
+| Variable Name | Type | Default Value | Description | Subsystem |
+|---|---|---|---|---|
+| `CHUNKING_CHUNK_SIZE` | `int` | `400` | Target token/character chunk size for section-aware splitting. | Chunker |
+| `CHUNKING_OVERLAP_SIZE` | `int` | `60` | Token/character overlap between adjacent passage chunks. | Chunker |
+| `CHUNKING_MIN_CHUNK_SIZE` | `int` | `50` | Minimum token threshold before a chunk is merged into its parent. | Chunker |
+| `CHUNKING_PRESERVE_HEADINGS` | `bool` | `true` | Retain section headings and hierarchy in chunk metadata. | Chunker |
+| `CHUNKING_MAX_HEADING_LEVEL` | `int` | `4` | Maximum Markdown/PDF heading depth tracked in section path. | Chunker |
+
+---
+
+### 2.8 BM25 Lexical Retrieval Settings (`BM25Settings`)
+
+| Variable Name | Type | Default Value | Description | Subsystem |
+|---|---|---|---|---|
+| `BM25_ENABLED` | `bool` | `true` | Enables student-partitioned BM25Okapi lexical retrieval. | Lexical Index |
+| `BM25_INDEX_DIR` | `str` | `data/bm25` | Directory path for disk-persisted student BM25 index files. | Storage |
+| `BM25_K1` | `float` | `1.5` | BM25 term frequency saturation parameter. | Lexical Index |
+| `BM25_B` | `float` | `0.75` | BM25 document length normalization parameter. | Lexical Index |
+| `BM25_CANDIDATE_COUNT` | `int` | `20` | Number of candidate chunks retrieved during lexical ranking phase. | Retrieval Pipeline |
+
+---
+
+### 2.9 Hybrid Retrieval & Reciprocal Rank Fusion (`HybridRetrievalSettings`)
+
+| Variable Name | Type | Default Value | Description | Subsystem |
+|---|---|---|---|---|
+| `HYBRID_ENABLED` | `bool` | `true` | Enables multi-modal Dense + BM25 Reciprocal Rank Fusion. | Hybrid Retriever |
+| `HYBRID_DENSE_CANDIDATES` | `int` | `20` | Number of dense vector candidates retrieved from ChromaDB. | Vector Store |
+| `HYBRID_BM25_CANDIDATES` | `int` | `20` | Number of lexical candidates retrieved from BM25 index. | Lexical Index |
+| `HYBRID_RRF_K` | `int` | `60` | Reciprocal Rank Fusion constant denominator (1 / (k + rank)). | Fusion Algorithm |
+| `HYBRID_FINAL_TOP_K` | `int` | `6` | Number of top fused candidates passed to reranking/grader. | Retrieval Pipeline |
+
+---
+
+### 2.10 Cross-Encoder Reranking Settings (`RerankerSettings`)
+
+| Variable Name | Type | Default Value | Description | Subsystem |
+|---|---|---|---|---|
+| `RERANKER_ENABLED` | `bool` | `true` | Enables sentence-transformers Cross-Encoder reranking. | Reranker |
+| `RERANKER_MODEL` | `str` | `cross-encoder/ms-marco-MiniLM-L-6-v2` | Hugging Face model identifier for cross-encoder reranking. | Reranker |
+| `RERANKER_TOP_K` | `int` | `4` | Number of candidate passages retained after reranking. | Reranker |
+| `RERANKER_MAX_CANDIDATES` | `int` | `16` | Maximum candidate pool size sent to cross-encoder model. | Reranker |
+| `RERANKER_BATCH_SIZE` | `int` | `16` | Batch size for cross-encoder inference passes. | Reranker |
+| `RERANKER_DEVICE` | `str` | `cpu` | Device for inference: `cpu`, `cuda`, or `mps`. | Reranker |
+
+---
+
+### 2.11 Decision Model Settings (`DecisionModelSettings`)
+
+| Variable Name | Type | Default Value | Description | Subsystem |
+|---|---|---|---|---|
+| `DECISION_PROVIDER` | `str` | `jev` | Primary decision model provider: `jev`, `gemini`, `composite`, `disabled`. | Decision Engine |
+| `DECISION_MODEL` | `str` | `jev-v1` | Model name / endpoint ID for decision evaluations. | Decision Engine |
+| `DECISION_SHADOW_MODE` | `bool` | `false` | Run shadow provider in parallel without blocking primary decisions. | Reliability |
+| `DECISION_SHADOW_PROVIDER` | `str` | `gemini` | Shadow provider invoked asynchronously during shadow runs. | Reliability |
+| `DECISION_FALLBACK_PROVIDER` | `str` | `disabled` | Automatic failover provider if primary decision engine fails. | Reliability |
+| `DECISION_TIMEOUT_SECONDS` | `float` | `5.0` | Max duration before decision call aborts or fails over. | Reliability |
+| `GEMINI_API_KEY` | `str` | `""` | Google Gemini API key for `gemini-decision-1` provider. | Decision Engine |
+
+---
+
+### 2.12 Citation Generation & Verification Settings (`CitationSettings`)
+
+| Variable Name | Type | Default Value | Description | Subsystem |
+|---|---|---|---|---|
+| `CITATION_ENABLED` | `bool` | `true` | Enables citation extraction and multi-stage verification pipeline. | Citation Pipeline |
+| `CITATION_VERIFICATION_THRESHOLD` | `float` | `0.40` | Minimum token grounding support ratio required for claim validity. | Citation Verifier |
+| `CITATION_MAX_CLAIMS_PER_VERIFICATION` | `int` | `8` | Upper bound on claims verified per tutor response turn. | Citation Verifier |
+| `CITATION_STRICT_MODE` | `bool` | `false` | When true, rejects response if any single citation fails verification. | Citation Verifier |
+
+---
+
+### 2.13 Query Rewriting & Decomposition Settings (`QueryRewritingSettings`)
+
+| Variable Name | Type | Default Value | Description | Subsystem |
+|---|---|---|---|---|
+| `QUERY_REWRITING_ENABLED` | `bool` | `true` | Strips conversational wrappers and decomposes comparative queries. | Query Processor |
+| `QUERY_REWRITING_MAX_SUBQUERIES` | `int` | `3` | Maximum number of decomposed subqueries generated per prompt. | Query Processor |
+
+---
+
 ## 3. Environment-Specific Configurations
 
 ### 3.1 Recommended `.env.development`

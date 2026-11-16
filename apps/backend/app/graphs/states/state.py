@@ -26,12 +26,12 @@ class SocraticAIState(TypedDict, total=False):
     with_quiz: bool
 
     # --- Routing & Intent ----------------------------------------------------
-    intent: str                       # IntentType or legacy ChatIntent value
+    intent: str  # IntentType or legacy ChatIntent value
     intent_confidence: float
     intent_reasoning: str
     routing_decision: dict[str, Any]
     learning_goal: str
-    level: str                        # models.enums.StudentLevel value
+    level: str  # models.enums.StudentLevel value
 
     # --- Context & Layered Memory --------------------------------------------
     episodic_memories: list[dict[str, Any]]
@@ -40,21 +40,22 @@ class SocraticAIState(TypedDict, total=False):
     token_counts: dict[str, int]
 
     # --- Teacher -------------------------------------------------------------
-    lesson: dict[str, Any]            # serialised models.schemas.Explanation
+    lesson: dict[str, Any]  # serialised models.schemas.Explanation
 
     # --- Quiz / evaluation ----------------------------------------------------
-    quiz: dict[str, Any]              # serialised models.schemas.Quiz
-    quiz_id: str | None               # id of the quiz being answered
-    answers: list[dict[str, Any]]     # serialised AnswerSubmission list
-    evaluation: dict[str, Any]        # serialised EvaluationResult
+    quiz: dict[str, Any]  # serialised models.schemas.Quiz
+    quiz_id: str | None  # id of the quiz being answered
+    answers: list[dict[str, Any]]  # serialised AnswerSubmission list
+    evaluation: dict[str, Any]  # serialised EvaluationResult
 
     # --- Memory / recommendation ----------------------------------------------
     memory_updates: Annotated[list[dict[str, Any]], operator.add]
-    recommendations: dict[str, Any]   # serialised Recommendation
+    recommendations: dict[str, Any]  # serialised Recommendation
 
-    # --- RAG ------------------------------------------------------------------
-    rag_context: dict[str, Any]       # serialised RAGContext
+    # --- RAG & Citations -----------------------------------------------------
+    rag_context: dict[str, Any]  # serialised RAGContext
     rag_sources: list[str]
+    citation_verification: dict[str, Any]
 
     # --- Conversation transcript (accumulating) --------------------------------
     messages: Annotated[list[dict[str, Any]], operator.add]
@@ -66,4 +67,3 @@ class SocraticAIState(TypedDict, total=False):
 
 # Backward-compatibility alias
 EduAgentState = SocraticAIState
-

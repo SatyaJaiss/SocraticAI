@@ -132,4 +132,3 @@ class TestConversationSessions:
             headers=auth_header("student_deleter"),
         )
         assert read_resp.status_code == 404
-

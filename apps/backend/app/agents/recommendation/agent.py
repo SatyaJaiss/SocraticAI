@@ -33,10 +33,13 @@ class RecommendationAgent:
         ]
         evaluation = state.get("evaluation") or {}
 
-        score_lines = "\n".join(
-            f"- {s.concept}: {s.proficiency:.0%} ({s.attempts} attempts)"
-            for s in concept_scores[:10]
-        ) or "- (no concept scores yet)"
+        score_lines = (
+            "\n".join(
+                f"- {s.concept}: {s.proficiency:.0%} ({s.attempts} attempts)"
+                for s in concept_scores[:10]
+            )
+            or "- (no concept scores yet)"
+        )
 
         user_prompt = (
             f"{profile_prompt_section(profile)}\n\n"
@@ -58,9 +61,7 @@ class RecommendationAgent:
         logger.info("Recommendation agent suggested next topic: %r", rec.next_topic)
         return {
             "recommendations": rec.model_dump(),
-            "messages": [
-                {"role": "assistant", "content": message, "node": self.name}
-            ],
+            "messages": [{"role": "assistant", "content": message, "node": self.name}],
         }
 
     # ------------------------------------------------------------ helpers --

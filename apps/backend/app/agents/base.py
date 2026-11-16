@@ -23,9 +23,7 @@ def append_message(role: str, content: str, **extra: Any) -> list[dict]:
     return [message]
 
 
-def student_profile_from_state(
-    state: SocraticAIState, ctx: Any
-) -> StudentProfile:
+def student_profile_from_state(state: SocraticAIState, ctx: Any) -> StudentProfile:
     """Load (creating if needed) the student profile referenced by the state."""
     student_id = state.get("student_id") or "anonymous"
     return ctx.student_repo.get_or_create(student_id)
@@ -55,7 +53,7 @@ def memory_prompt_section(ctx: Any, student_id: str, limit: int = 8) -> str:
 
 
 def rag_prompt_section(state: SocraticAIState) -> str:
-    """Render retrieved chunks (if any) as grounded context for a node."""
+    """Render retrieved chunks (if any) as grounded context for a node with citation guidance."""
     rag_context = state.get("rag_context") or {}
     chunks = rag_context.get("retrieved_chunks") or []
     if not chunks:
@@ -63,7 +61,11 @@ def rag_prompt_section(state: SocraticAIState) -> str:
     parts = [
         f"[{i}] Source: {c.get('source')}"
         + (f" (p.{c['page']})" if c.get("page") is not None else "")
+        + (f" [{c['section_title']}]" if c.get("section_title") else "")
         + f"\n{c.get('content', '')}"
         for i, c in enumerate(chunks, start=1)
     ]
-    return "Retrieved notes (ground answers in these):\n\n" + "\n\n".join(parts)
+    return (
+        "Retrieved notes (ground answers in these and cite facts using [Source: <filename>, p. <page>]):\n\n"
+        + "\n\n".join(parts)
+    )

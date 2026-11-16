@@ -96,15 +96,20 @@ class VectorStore:
         except Exception as exc:
             raise RetrievalError(f"Embedding failed for {doc_id}: {exc}") from exc
 
-        ids = [f"{doc_id}::{i}" for i in range(len(chunks))]
+        ids = [c.get("chunk_id") or f"{doc_id}::{i}" for i, c in enumerate(chunks)]
         metadatas = [
             {
                 "doc_id": doc_id,
                 "student_id": student_id,
                 "source": c.get("source", source),
-                "page": int(c["page"]) if c.get("page") is not None else None,
+                "page": int(c["page"]) if c.get("page") is not None else 1,
+                "chunk_id": c.get("chunk_id") or f"{doc_id}::{i}",
+                "section_title": str(c.get("section_title") or ""),
+                "section_path": str(c.get("section_path") or ""),
+                "chunk_index": int(c.get("chunk_index", i)),
+                "content_hash": str(c.get("content_hash") or ""),
             }
-            for c in chunks
+            for i, c in enumerate(chunks)
         ]
 
         # Idempotent re-ingest: drop any previous chunks for this document first.
@@ -176,6 +181,24 @@ class VectorStore:
                     source=str(metadata.get("source", "unknown")),
                     page=int(metadata["page"]) if metadata.get("page") is not None else None,
                     score=score,
+                    chunk_id=str(metadata.get("chunk_id")) if metadata.get("chunk_id") else None,
+                    document_id=str(metadata.get("doc_id")) if metadata.get("doc_id") else None,
+                    student_id=str(metadata.get("student_id"))
+                    if metadata.get("student_id")
+                    else None,
+                    section_title=str(metadata.get("section_title"))
+                    if metadata.get("section_title")
+                    else None,
+                    section_path=str(metadata.get("section_path"))
+                    if metadata.get("section_path")
+                    else None,
+                    chunk_index=int(metadata["chunk_index"])
+                    if metadata.get("chunk_index") is not None
+                    else None,
+                    content_hash=str(metadata.get("content_hash"))
+                    if metadata.get("content_hash")
+                    else None,
+                    dense_score=score,
                 )
             )
         return chunks
@@ -197,9 +220,7 @@ class VectorStore:
 
     def has_document(self, doc_id: str) -> bool:
         try:
-            result = self._collection.get(
-                where={"doc_id": doc_id}, limit=1, include=[]
-            )
+            result = self._collection.get(where={"doc_id": doc_id}, limit=1, include=[])
             return bool(result and result.get("ids"))
         except Exception:  # pragma: no cover - defensive
             return False

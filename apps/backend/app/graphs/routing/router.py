@@ -27,5 +27,3 @@ def route_from_memory(state: dict[str, Any], rec_node: str) -> str:
     if state.get("next_agent") == Routes.END:
         return Routes.END
     return rec_node
-
-

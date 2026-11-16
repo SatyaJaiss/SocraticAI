@@ -14,6 +14,7 @@ from app.core.config import Settings, get_settings
 from app.db.connection import Database
 from app.llm.clients.client import build_llm_client
 from app.memory.manager import MemoryManager
+from app.rag.citation.verifier import CitationVerifier
 from app.rag.pipelines.service import RAGService
 from app.repositories import (
     ConversationRepository,
@@ -56,7 +57,15 @@ class Container:
 
         self.cache = CacheManager(self.settings.cache)
         self.llm = build_llm_client(self.settings.llm)
-        self.rag = RAGService(self.settings.vector_store, cache_manager=self.cache)
+        self.rag = RAGService(
+            self.settings.vector_store,
+            cache_manager=self.cache,
+            full_settings=self.settings,
+        )
+        self.citation_verifier = CitationVerifier(
+            document_repo=self.document_repo,
+            settings=self.settings.citation,
+        )
 
         self.memory_manager = MemoryManager(
             db=self.db,
@@ -106,6 +115,7 @@ class Container:
             memory_manager=self.memory_manager,
             context_builder=self.context_builder,
             router=self.router,
+            citation_verifier=self.citation_verifier,
         )
 
     def dispose(self) -> None:

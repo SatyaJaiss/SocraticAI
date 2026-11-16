@@ -15,12 +15,14 @@ if TYPE_CHECKING:
 def build_tutoring_graph(ctx: AgentContext) -> CompiledStateGraph:
     """Build and compile the tutoring workflow graph (lazy load to avoid circular deps)."""
     from app.graphs.tutoring.workflow import build_tutoring_graph as _build
+
     return _build(ctx)
 
 
 def build_evaluation_graph(ctx: AgentContext) -> CompiledStateGraph:
     """Build and compile the evaluation workflow graph (lazy load to avoid circular deps)."""
     from app.graphs.evaluation.workflow import build_evaluation_graph as _build
+
     return _build(ctx)
 
 

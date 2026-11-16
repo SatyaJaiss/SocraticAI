@@ -133,9 +133,7 @@ def register_exception_handlers(app: FastAPI) -> None:
     from fastapi.responses import JSONResponse
 
     @app.exception_handler(SocraticAIError)
-    async def socraticai_error_handler(
-        request: Request, exc: SocraticAIError
-    ) -> JSONResponse:
+    async def socraticai_error_handler(request: Request, exc: SocraticAIError) -> JSONResponse:
         headers = {}
         if isinstance(exc, AuthenticationError):
             headers["WWW-Authenticate"] = "Bearer"

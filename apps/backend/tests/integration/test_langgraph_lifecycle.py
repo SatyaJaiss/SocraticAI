@@ -10,7 +10,9 @@ class TestLangGraphLifecycle:
         # Repeated calls to container.tutoring_graph return the identical compiled instance
         graph_1 = container.tutoring_graph
         graph_2 = container.tutoring_graph
-        assert graph_1 is graph_2, "Tutoring graph should be compiled once and cached as a singleton"
+        assert graph_1 is graph_2, (
+            "Tutoring graph should be compiled once and cached as a singleton"
+        )
 
         eval_graph_1 = container.evaluation_graph
         eval_graph_2 = container.evaluation_graph
@@ -49,7 +51,9 @@ class TestLangGraphLifecycle:
         assert "Schrödinger" not in resp_h.json()["lesson"]["summary"]
         assert "French Revolution" in resp_h.json()["lesson"]["topic"]
 
-    async def test_graph_execution_failure_handled_gracefully(self, client, auth_header, monkeypatch, container):
+    async def test_graph_execution_failure_handled_gracefully(
+        self, client, auth_header, monkeypatch, container
+    ):
         # Simulate unexpected runtime error in tutoring graph
         def failing_ainvoke(*args, **kwargs):
             raise RuntimeError("LLM worker crashed unexpectedly")
@@ -58,4 +62,3 @@ class TestLangGraphLifecycle:
 
         with pytest.raises(RuntimeError, match="LLM worker crashed"):
             await container.tutoring_graph.ainvoke({"student_id": "fail_test"})
-

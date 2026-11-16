@@ -58,12 +58,16 @@ class ConversationRepository(BaseRepository):
     def list_sessions(self, student_id: str, limit: int = 50) -> list[ConversationSessionView]:
         """List all conversation sessions for a student, newest updated first."""
         with self.session() as session:
-            rows = session.execute(
-                select(ConversationSession)
-                .where(ConversationSession.student_id == student_id)
-                .order_by(ConversationSession.updated_at.desc())
-                .limit(limit)
-            ).scalars().all()
+            rows = (
+                session.execute(
+                    select(ConversationSession)
+                    .where(ConversationSession.student_id == student_id)
+                    .order_by(ConversationSession.updated_at.desc())
+                    .limit(limit)
+                )
+                .scalars()
+                .all()
+            )
             return [
                 ConversationSessionView(
                     id=r.id,
@@ -149,9 +153,9 @@ class ConversationRepository(BaseRepository):
             if conversation_id is not None:
                 query = query.where(Conversation.conversation_id == conversation_id)
 
-            rows = session.execute(
-                query.order_by(Conversation.id.desc()).limit(limit)
-            ).scalars().all()
+            rows = (
+                session.execute(query.order_by(Conversation.id.desc()).limit(limit)).scalars().all()
+            )
             rows = list(reversed(rows))
             return [
                 {
@@ -169,8 +173,10 @@ class ConversationRepository(BaseRepository):
     def count(self, student_id: str, conversation_id: str | None = None) -> int:
         """Count total messages for a student, optionally filtered by conversation_id."""
         with self.session() as session:
-            query = select(func.count()).select_from(Conversation).where(
-                Conversation.student_id == student_id
+            query = (
+                select(func.count())
+                .select_from(Conversation)
+                .where(Conversation.student_id == student_id)
             )
             if conversation_id is not None:
                 query = query.where(Conversation.conversation_id == conversation_id)

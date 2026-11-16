@@ -45,9 +45,7 @@ def _is_correct(question: QuizQuestion, answer: str | None) -> bool:
     correct = question.correct_answer.strip()
     if question.type == QuestionType.NUMERICAL:
         try:
-            return abs(float(submitted) - float(correct)) <= 1e-6 * max(
-                1.0, abs(float(correct))
-            )
+            return abs(float(submitted) - float(correct)) <= 1e-6 * max(1.0, abs(float(correct)))
         except ValueError:
             return False
     return submitted.lower() == correct.lower()
@@ -104,12 +102,8 @@ class EvaluationAgent:
         revision_topics = list(dict.fromkeys(weak_concepts))
 
         # Latest subjective feedback, if any, else a generic message.
-        feedback_parts = [
-            f"You scored {percent:.1f}% on this quiz."
-        ]
-        feedback_parts.append(
-            f"Revise: {', '.join(revision_topics) or 'nothing — well done!'}"
-        )
+        feedback_parts = [f"You scored {percent:.1f}% on this quiz."]
+        feedback_parts.append(f"Revise: {', '.join(revision_topics) or 'nothing — well done!'}")
 
         evaluation = EvaluationResult(
             score=score,
@@ -118,7 +112,8 @@ class EvaluationAgent:
             weak_concepts=weak_concepts,
             revision_topics=revision_topics,
             next_lesson=(
-                f"Revise the fundamentals of {revision_topics[0]}" if revision_topics
+                f"Revise the fundamentals of {revision_topics[0]}"
+                if revision_topics
                 else f"Move on to an application of {quiz.topic}"
             ),
             feedback=" ".join(feedback_parts),
@@ -126,14 +121,10 @@ class EvaluationAgent:
 
         self._persist(student_id, quiz_id, quiz, answers, evaluation, per_topic)
         message = self._format_message(evaluation)
-        logger.info(
-            "Evaluation agent scored quiz %s at %.1f%%", quiz_id, percent
-        )
+        logger.info("Evaluation agent scored quiz %s at %.1f%%", quiz_id, percent)
         return {
             "evaluation": evaluation.model_dump(),
-            "messages": [
-                {"role": "assistant", "content": message, "node": self.name}
-            ],
+            "messages": [{"role": "assistant", "content": message, "node": self.name}],
         }
 
     # ------------------------------------------------------- subjective -- --
@@ -201,12 +192,8 @@ class EvaluationAgent:
                 continue
             correct_count = sum(1 for ok, _ in results if ok)
             proficiency = round(correct_count / len(results), 4)
-            self._ctx.student_repo.upsert_concept_score(
-                student_id, topic, proficiency
-            )
-        self._ctx.progress_repo.add_snapshot(
-            student_id, quiz.topic, evaluation.percent
-        )
+            self._ctx.student_repo.upsert_concept_score(student_id, topic, proficiency)
+        self._ctx.progress_repo.add_snapshot(student_id, quiz.topic, evaluation.percent)
 
     # ------------------------------------------------------------ helpers --
     @staticmethod

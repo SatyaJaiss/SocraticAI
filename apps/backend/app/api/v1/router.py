@@ -25,4 +25,3 @@ api_v1_router.include_router(students.router)
 api_v1_router.include_router(quizzes.router)
 api_v1_router.include_router(documents.router)
 api_v1_router.include_router(dashboard.router)
-

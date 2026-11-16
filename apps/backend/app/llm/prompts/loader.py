@@ -35,9 +35,7 @@ def _load_yaml(name: str) -> dict:
 
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict) or "system" not in data:
-        raise ConfigurationError(
-            f"Prompt template {path.name} must define a 'system' key"
-        )
+        raise ConfigurationError(f"Prompt template {path.name} must define a 'system' key")
     return data
 
 
@@ -53,4 +51,3 @@ def render_prompt(name: str, **kwargs: object) -> str:
     crashes a prompt build.
     """
     return Template(get_prompt(name)).safe_substitute(**kwargs)
-

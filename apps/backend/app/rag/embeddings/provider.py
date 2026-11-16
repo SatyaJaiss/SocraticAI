@@ -41,8 +41,7 @@ class SentenceTransformerProvider:
     def __init__(self, model_name: str) -> None:
         if SentenceTransformer is None:
             raise RetrievalError(
-                "sentence-transformers is not installed; cannot use "
-                "SentenceTransformerProvider"
+                "sentence-transformers is not installed; cannot use SentenceTransformerProvider"
             )
         self._model = SentenceTransformer(model_name)
 
@@ -82,9 +81,7 @@ def get_embedding_provider(settings: VectorStoreSettings) -> EmbeddingProvider:
             logger.info("Using sentence-transformers embeddings (%s)", model_name)
             return provider
         except Exception as exc:  # pragma: no cover - fallback path
-            logger.warning(
-                "sentence-transformers failed to load (%s); falling back to ONNX", exc
-            )
+            logger.warning("sentence-transformers failed to load (%s); falling back to ONNX", exc)
     provider = ChromaOnnxProvider()
     logger.info("Using chromadb ONNX MiniLM embeddings")
     return provider
