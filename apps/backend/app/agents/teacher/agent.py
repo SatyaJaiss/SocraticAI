@@ -30,10 +30,66 @@ class TeacherAgent:
         student_id = state.get("student_id") or "anonymous"
         profile = student_profile_from_state(state, self._ctx)
 
+        # Milestone 3: Dynamic pedagogical strategy & explanation mode
+        strat_res = None
+        strategy_str = "direct_explanation"
+        mode_str = "intermediate"
+        strategy_prompt_section = ""
+        active_misconceptions: list[str] = []
+
+        if getattr(self._ctx, "strategy_selector", None) is not None:
+            mastery = (
+                self._ctx.mastery_repo.get_mastery(student_id, topic)
+                if self._ctx.mastery_repo
+                else None
+            )
+            m_score = mastery.mastery_score if mastery else 0.0
+            from app.schemas.enums import MasteryStatus
+
+            m_status = mastery.status if mastery else MasteryStatus.NOT_ATTEMPTED
+
+            if getattr(self._ctx, "misconception_detector", None) is not None:
+                active_misconceptions = self._ctx.misconception_detector.get_active_misconceptions(
+                    student_id, concept=topic
+                )
+
+            prereqs_missing = []
+            if self._ctx.mastery_repo:
+                _, prereqs_missing = self._ctx.mastery_repo.check_prerequisites_satisfied(
+                    student_id, topic
+                )
+
+            strat_res = self._ctx.strategy_selector.select(
+                message=state.get("user_input") or "",
+                student=profile,
+                concept=topic,
+                mastery_status=m_status,
+                mastery_score=m_score,
+                has_active_misconceptions=len(active_misconceptions) > 0,
+                prerequisites_missing=prereqs_missing,
+            )
+            strategy_str = strat_res.strategy.value
+            mode_str = strat_res.explanation_mode.value
+
+            strategy_prompt_section = (
+                f"Tutoring Strategy: {strategy_str}\n"
+                f"Explanation Mode: {mode_str}\n"
+                f"Pedagogical Reason: {strat_res.reasoning}\n"
+            )
+            if active_misconceptions:
+                strategy_prompt_section += (
+                    f"Active Misconceptions to Clarify: {', '.join(active_misconceptions)}\n"
+                )
+            if prereqs_missing:
+                strategy_prompt_section += (
+                    f"Missing Prerequisites to Bridge: {', '.join(prereqs_missing)}\n"
+                )
+
         user_prompt = (
             f"Topic: {topic}\n"
             f"Student level: {state.get('level') or profile.level.value}\n"
             f"Learning goal: {state.get('learning_goal') or 'understand the basics'}\n\n"
+            f"{strategy_prompt_section}\n"
             f"{profile_prompt_section(profile)}\n\n"
             f"{memory_prompt_section(self._ctx, student_id)}\n\n"
             f"{rag_prompt_section(state)}"
@@ -66,6 +122,9 @@ class TeacherAgent:
         logger.info("Teacher delivered lesson on %r", lesson.topic)
         result_payload = {
             "lesson": lesson.model_dump(),
+            "tutoring_strategy": strategy_str,
+            "explanation_mode": mode_str,
+            "active_misconceptions": active_misconceptions,
             "messages": [{"role": "assistant", "content": message, "node": self.name}],
         }
         if verification_data:

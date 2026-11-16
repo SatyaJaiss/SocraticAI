@@ -39,8 +39,13 @@ class SocraticAIState(TypedDict, total=False):
     assembled_prompt: str
     token_counts: dict[str, int]
 
-    # --- Teacher -------------------------------------------------------------
+    # --- Teacher & Tutoring Intelligence (Milestone 3) ----------------------
     lesson: dict[str, Any]  # serialised models.schemas.Explanation
+    tutoring_strategy: str  # TutoringStrategy value
+    explanation_mode: str  # ExplanationMode value
+    socratic_response: dict[str, Any]  # serialised SocraticTurnResponse
+    learning_evidence: list[dict[str, Any]]  # serialised LearningEvidenceSchema list
+    active_misconceptions: list[str]
 
     # --- Quiz / evaluation ----------------------------------------------------
     quiz: dict[str, Any]  # serialised models.schemas.Quiz

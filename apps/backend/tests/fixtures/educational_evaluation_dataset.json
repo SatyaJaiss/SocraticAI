@@ -1,0 +1,211 @@
+{
+  "metadata": {
+    "benchmark": "SocraticAI Educational Intelligence Benchmark",
+    "version": "3.0.0",
+    "description": "Curated golden dataset for concept mastery, Socratic dialogue, misconception detection, numerical tolerances, rubric grading, and prerequisite DAG resolution."
+  },
+  "mastery_test_cases": [
+    {
+      "id": "mastery_single_correct",
+      "concept": "Gradient Descent",
+      "evidence_sequence": [
+        {"score": 1.0, "confidence": 0.9, "demonstrated": true}
+      ],
+      "expected_status": "attempted",
+      "max_allowed_confidence": 0.50,
+      "description": "A single correct answer must never immediately grant full mastery or confidence > 0.50."
+    },
+    {
+      "id": "mastery_gradual_mastery",
+      "concept": "Convolution Operation",
+      "evidence_sequence": [
+        {"score": 0.85, "confidence": 0.85, "demonstrated": true},
+        {"score": 0.90, "confidence": 0.90, "demonstrated": true},
+        {"score": 0.95, "confidence": 0.95, "demonstrated": true}
+      ],
+      "expected_status": "mastered",
+      "min_expected_confidence": 0.70,
+      "description": "At least 3 consistent demonstrations above 0.80 score are required to achieve MASTERED."
+    },
+    {
+      "id": "mastery_struggling_revision",
+      "concept": "Backpropagation",
+      "evidence_sequence": [
+        {"score": 0.40, "confidence": 0.80, "demonstrated": false},
+        {"score": 0.30, "confidence": 0.80, "demonstrated": false},
+        {"score": 0.35, "confidence": 0.80, "demonstrated": false}
+      ],
+      "expected_status": "needs_revision",
+      "description": "Multiple low scores transition the concept into NEEDS_REVISION."
+    }
+  ],
+  "socratic_dialogue_test_cases": [
+    {
+      "id": "soc_work_energy",
+      "concept": "Work-Energy Theorem",
+      "problem": "A 2 kg cart starts from rest and is pushed with a net force of 10 N over 5 meters. What is its final velocity?",
+      "target_solution": "Net work W = F * d = 10 * 5 = 50 J. By work-energy theorem, W = 0.5 * m * v^2 -> 50 = 0.5 * 2 * v^2 -> v^2 = 50 -> v = sqrt(50) = 7.07 m/s.",
+      "total_steps": 3,
+      "steps": [
+        {
+          "step": 1,
+          "question": "What is the core principle or formula connecting net force and distance to kinetic energy?",
+          "valid_inputs": ["Work-energy theorem", "W = F * d and delta K", "Net work equals change in kinetic energy"],
+          "invalid_inputs": ["Use Ohm's law", "PV = nRT"]
+        },
+        {
+          "step": 2,
+          "question": "How do we calculate the work done by the force over 5 meters?",
+          "valid_inputs": ["W = 10 N * 5 m = 50 Joules", "10 times 5 is 50 J", "Work is force times displacement, 50 J"],
+          "invalid_inputs": ["Divide 10 by 5", "Work is 2 Joules"]
+        },
+        {
+          "step": 3,
+          "question": "Setting 50 J equal to 0.5 * m * v^2 with m = 2 kg, what is the final velocity?",
+          "valid_inputs": ["v = sqrt(50) which is about 7.07 m/s", "7.07 m/s", "around 7.1 m/s"],
+          "invalid_inputs": ["v = 25 m/s", "v = 100"]
+        }
+      ],
+      "hints": {
+        "1": "Consider the relationship between force, displacement, and work done on an object.",
+        "2": "Recall the formula W = F * d and the work-energy theorem W = Delta K.",
+        "3": "Compute W = 10 * 5 = 50 J, then set 50 = 0.5 * 2 * v^2 and solve for v.",
+        "4": "Full Solution Walkthrough: W = 10 * 5 = 50 J. 50 = 0.5 * 2 * v^2 => v = sqrt(50) approx 7.07 m/s."
+      }
+    }
+  ],
+  "misconception_test_cases": [
+    {
+      "id": "misc_vacuum_freefall",
+      "concept": "Gravity",
+      "question": "If a 10 kg iron ball and a 1 kg wooden ball are dropped simultaneously in a vacuum chamber, which hits first?",
+      "student_answer": "The heavier iron ball will fall faster and hit the ground first because it has much more mass.",
+      "expected_misconception": "Belief that heavier objects fall faster in a vacuum",
+      "is_misconception": true
+    },
+    {
+      "id": "misc_newtons_third_law",
+      "concept": "Physics",
+      "question": "A massive truck collides head-on with a small compact car. Which vehicle exerts a greater force on the other?",
+      "student_answer": "The massive truck exerts a much greater force on the car, which is why the action force overcomes the reaction force.",
+      "expected_misconception": "Belief that action and reaction forces can be unequal in magnitude",
+      "is_misconception": true
+    },
+    {
+      "id": "misc_fraction_addition",
+      "concept": "Math",
+      "question": "Calculate 1/2 + 1/3.",
+      "student_answer": "You just add the numerators and denominators directly to get 2/5.",
+      "expected_misconception": "Adding denominators when performing fraction addition",
+      "is_misconception": true
+    },
+    {
+      "id": "misc_correlation_causation",
+      "concept": "Statistics",
+      "question": "Ice cream sales and drowning incidents both increase during summer. Does ice cream cause drowning?",
+      "student_answer": "Yes, high correlation implies causation, so eating ice cream causes drowning accidents.",
+      "expected_misconception": "Confusing statistical correlation with causal mechanism",
+      "is_misconception": true
+    },
+    {
+      "id": "misc_plant_respiration",
+      "concept": "Photosynthesis",
+      "question": "Do green plants perform cellular respiration at night?",
+      "student_answer": "No, plants only perform photosynthesis and don't respire at all.",
+      "expected_misconception": "Belief that plants only perform photosynthesis and not cellular respiration",
+      "is_misconception": true
+    }
+  ],
+  "numerical_tolerance_test_cases": [
+    {
+      "id": "num_exact",
+      "correct_answer": "42.0",
+      "student_answer": "42.0",
+      "rel_tol": 0.01,
+      "expected_correct": true
+    },
+    {
+      "id": "num_within_1pct",
+      "correct_answer": "100.0",
+      "student_answer": "100.8",
+      "rel_tol": 0.01,
+      "expected_correct": true
+    },
+    {
+      "id": "num_out_of_tol",
+      "correct_answer": "100.0",
+      "student_answer": "103.5",
+      "rel_tol": 0.01,
+      "expected_correct": false
+    },
+    {
+      "id": "num_scientific_notation",
+      "correct_answer": "1.5e-3",
+      "student_answer": "0.001505",
+      "rel_tol": 0.01,
+      "expected_correct": true
+    },
+    {
+      "id": "num_with_units",
+      "correct_answer": "9.8",
+      "student_answer": "The acceleration is 9.81 m/s^2",
+      "rel_tol": 0.01,
+      "expected_correct": true
+    }
+  ],
+  "rubric_grading_test_cases": [
+    {
+      "id": "rubric_high_quality",
+      "question": "Explain the difference between overfitting and underfitting in supervised learning.",
+      "correct_answer": "Overfitting occurs when a model learns the training data and noise too closely, failing to generalize to unseen test data (high variance). Underfitting occurs when a model is too simplistic to capture the underlying pattern (high bias).",
+      "rubric": {
+        "conceptual_correctness_weight": 0.40,
+        "reasoning_weight": 0.30,
+        "completeness_weight": 0.30,
+        "key_points": ["overfitting high variance", "underfitting high bias", "generalization to unseen data"]
+      },
+      "student_answer": "Overfitting happens when a model fits training noise and has high variance, causing poor test generalization. Underfitting is when the model is too simple, leading to high bias and poor fit on both training and test data.",
+      "expected_passed": true,
+      "min_score": 0.75
+    },
+    {
+      "id": "rubric_poor_quality",
+      "question": "Explain the difference between overfitting and underfitting in supervised learning.",
+      "correct_answer": "Overfitting has high variance and fails on test data; underfitting has high bias.",
+      "rubric": {
+        "conceptual_correctness_weight": 0.40,
+        "reasoning_weight": 0.30,
+        "completeness_weight": 0.30,
+        "key_points": ["variance", "bias", "generalization"]
+      },
+      "student_answer": "One fits too much and the other fits too little.",
+      "expected_passed": false,
+      "max_score": 0.60
+    }
+  ],
+  "prerequisite_dag_test_cases": [
+    {
+      "id": "prereq_neural_networks_missing",
+      "student_id": "student_missing_calc",
+      "target_concept": "Neural Networks",
+      "existing_mastery": {
+        "Linear Algebra": {"score": 0.90, "status": "mastered"}
+      },
+      "expected_satisfied": false,
+      "expected_missing": ["Calculus"],
+      "recommended_action": "learn"
+    },
+    {
+      "id": "prereq_neural_networks_satisfied",
+      "student_id": "student_ready_nn",
+      "target_concept": "Neural Networks",
+      "existing_mastery": {
+        "Linear Algebra": {"score": 0.85, "status": "mastered"},
+        "Calculus": {"score": 0.88, "status": "mastered"}
+      },
+      "expected_satisfied": true,
+      "expected_missing": [],
+      "recommended_action": "advance"
+    }
+  ]
+}

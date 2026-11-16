@@ -177,6 +177,46 @@ class WorkflowNodes:
             "intent": "memory_query",
         }
 
+    async def socratic(self, state: SocraticAIState) -> dict[str, Any]:
+        """Socratic dialogue and guided problem-solving handler."""
+        student_id = state.get("student_id", "")
+        conversation_id = state.get("conversation_id", "")
+        user_input = state.get("user_input", "")
+        topic = state.get("topic") or "General Problem Solving"
+
+        if (
+            getattr(self.ctx, "socratic_engine", None) is not None
+            and getattr(self.ctx, "socratic_repo", None) is not None
+        ):
+            active = self.ctx.socratic_repo.get_active_session(student_id, conversation_id)
+            if active:
+                res = self.ctx.socratic_engine.process_student_turn(active.id, user_input)
+            else:
+                res = self.ctx.socratic_engine.start_session(
+                    student_id=student_id,
+                    conversation_id=conversation_id,
+                    concept=topic,
+                    problem_statement=user_input,
+                    total_steps=3,
+                )
+            msg_content = f"{res.feedback}\n\n{res.question}" if res.question else res.feedback
+            if res.hint:
+                msg_content += f"\n\nHint (Level {res.hint_level}): {res.hint}"
+
+            return {
+                "socratic_response": res.model_dump(),
+                "messages": [{"role": "assistant", "content": msg_content}],
+                "next_agent": Routes.END,
+                "intent": "practice",
+            }
+
+        return {
+            "messages": [
+                {"role": "assistant", "content": "Let's explore this problem step by step."}
+            ],
+            "next_agent": Routes.END,
+        }
+
 
 # --------------------------------------------------------------------------- #
 # Main Graph Builder
@@ -201,6 +241,7 @@ def build_tutoring_graph(ctx: AgentContext) -> CompiledStateGraph:
     graph.add_node("clarification", nodes.clarification)
     graph.add_node("progress", nodes.progress)
     graph.add_node("memory_query", nodes.memory_query)
+    graph.add_node("socratic", nodes.socratic)
 
     # --- core agent nodes ---
     graph.add_node(planner.name, planner.run)
@@ -244,9 +285,13 @@ def build_tutoring_graph(ctx: AgentContext) -> CompiledStateGraph:
             Routes.TEACH: teacher.name,
             Routes.ANSWER_QUESTION: rag.name,
             Routes.QUIZ: quiz.name,
+            Routes.SOCRATIC: "socratic",
             Routes.END: END,
         },
     )
+
+    # --- socratic -> memory ---
+    graph.add_edge("socratic", memory.name)
 
     # --- rag -> teacher (answer grounded in retrieved notes) ---
     graph.add_edge(rag.name, teacher.name)

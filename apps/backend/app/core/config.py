@@ -64,6 +64,7 @@ class Routes:
     OFF_TOPIC = "off_topic"
     CLARIFICATION = "clarification"
     TUTORING = "tutoring"
+    SOCRATIC = "socratic"
     END = "end"
 
 
@@ -344,6 +345,68 @@ class QueryRewritingSettings(BaseSettings):
     max_subqueries: int = 3
 
 
+class TutoringSettings(BaseSettings):
+    """Adaptive tutoring and Socratic dialogue configuration."""
+
+    model_config = SettingsConfigDict(env_prefix="TUTORING_", extra="ignore", env_file=_ENV_FILE)
+
+    default_strategy: str = "direct_explanation"
+    max_dialogue_turns: int = 10
+    max_hint_level: int = 4
+    default_explanation_mode: str = "intermediate"
+    socratic_enabled: bool = True
+    adaptive_depth_enabled: bool = True
+
+
+class MasterySettings(BaseSettings):
+    """Concept-level learning state and evidence-based mastery configuration."""
+
+    model_config = SettingsConfigDict(env_prefix="MASTERY_", extra="ignore", env_file=_ENV_FILE)
+
+    mastery_threshold: float = 0.80
+    confidence_threshold: float = 0.70
+    min_evidence_count: int = 3
+    evidence_weight: float = 0.35
+    decay_days: int = 30
+    partial_understanding_threshold: float = 0.50
+
+
+class AssessmentSettings(BaseSettings):
+    """Adaptive quiz generation and deterministic evaluation configuration."""
+
+    model_config = SettingsConfigDict(env_prefix="ASSESSMENT_", extra="ignore", env_file=_ENV_FILE)
+
+    default_question_count: int = 5
+    numerical_relative_tolerance: float = 0.01
+    numerical_absolute_tolerance: float = 1e-4
+    subjective_passing_score: float = 0.70
+    max_retries: int = 2
+    require_document_grounding: bool = True
+
+
+class AdaptiveRecommendationSettings(BaseSettings):
+    """Prerequisite-aware recommendation engine configuration."""
+
+    model_config = SettingsConfigDict(
+        env_prefix="RECOMMENDATION_", extra="ignore", env_file=_ENV_FILE
+    )
+
+    max_recommendations: int = 5
+    prerequisite_threshold: float = 0.70
+
+
+class MisconceptionSettings(BaseSettings):
+    """Evidence-based misconception detection and tracking configuration."""
+
+    model_config = SettingsConfigDict(
+        env_prefix="MISCONCEPTION_", extra="ignore", env_file=_ENV_FILE
+    )
+
+    detection_confidence_threshold: float = 0.75
+    resolution_attempts_required: int = 2
+    prevent_duplicate_active: bool = True
+
+
 class Settings(BaseSettings):
     """Aggregate settings object injected across the whole application."""
 
@@ -374,6 +437,16 @@ class Settings(BaseSettings):
     decision: DecisionModelSettings = Field(default_factory=DecisionModelSettings)
     citation: CitationSettings = Field(default_factory=CitationSettings)
     query_rewrite: QueryRewritingSettings = Field(default_factory=QueryRewritingSettings)
+    tutoring: TutoringSettings = Field(default_factory=TutoringSettings)
+    mastery: MasterySettings = Field(default_factory=MasterySettings)
+    assessment: AssessmentSettings = Field(default_factory=AssessmentSettings)
+    recommendation: AdaptiveRecommendationSettings = Field(
+        default_factory=AdaptiveRecommendationSettings
+    )
+    adaptive_recommendation: AdaptiveRecommendationSettings = Field(
+        default_factory=AdaptiveRecommendationSettings
+    )
+    misconception: MisconceptionSettings = Field(default_factory=MisconceptionSettings)
     prompts_dir: Path = Field(default_factory=lambda: _PROJECT_ROOT / "configs" / "prompts")
 
 

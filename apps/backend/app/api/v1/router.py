@@ -5,6 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter
 
 from app.api.v1.routes import (
+    analytics,
     auth,
     chat,
     conversations,
@@ -12,6 +13,7 @@ from app.api.v1.routes import (
     documents,
     health,
     quizzes,
+    socratic,
     students,
 )
 
@@ -25,3 +27,5 @@ api_v1_router.include_router(students.router)
 api_v1_router.include_router(quizzes.router)
 api_v1_router.include_router(documents.router)
 api_v1_router.include_router(dashboard.router)
+api_v1_router.include_router(analytics.router)
+api_v1_router.include_router(socratic.router)

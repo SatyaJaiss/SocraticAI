@@ -39,6 +39,9 @@ class Student(Base):
     updated_at: Mapped[str] = mapped_column(String(32))
 
 
+StudentProfileRow = Student
+
+
 class Topic(Base):
     """A topic the student has encountered, with mastery status."""
 
@@ -136,6 +139,9 @@ class ConversationSession(Base):
     title: Mapped[str] = mapped_column(String(256), default="Tutoring Session")
     created_at: Mapped[str] = mapped_column(String(32))
     updated_at: Mapped[str] = mapped_column(String(32))
+
+
+StudentProfileRow = Student
 
 
 class Conversation(Base):
@@ -240,3 +246,73 @@ class StudentMisconception(Base):
     provenance: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[str] = mapped_column(String(32))
     resolved_at: Mapped[str | None] = mapped_column(String(32), nullable=True)
+
+
+class ConceptPrerequisite(Base):
+    """Adjacency representation of concept dependencies for recommendation and diagnosis."""
+
+    __tablename__ = "concept_prerequisites"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    concept: Mapped[str] = mapped_column(String(256), index=True)
+    prerequisite_concept: Mapped[str] = mapped_column(String(256), index=True)
+    relationship_type: Mapped[str] = mapped_column(String(32), default="direct")
+    description: Mapped[str] = mapped_column(Text, default="")
+    created_at: Mapped[str] = mapped_column(String(32))
+
+
+class LearningEvidence(Base):
+    """Audit ledger capturing assessments, dialogue demonstrations, and problems solved."""
+
+    __tablename__ = "learning_evidence"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    student_id: Mapped[str] = mapped_column(ForeignKey("students.id"), index=True)
+    concept: Mapped[str] = mapped_column(String(256), index=True)
+    evidence_type: Mapped[str] = mapped_column(String(32))
+    score: Mapped[float] = mapped_column(Float, default=0.0)
+    demonstrated: Mapped[bool] = mapped_column(Boolean, default=False)
+    confidence: Mapped[float] = mapped_column(Float, default=0.5)
+    provenance: Mapped[dict] = mapped_column(JSON, default=dict)
+    created_at: Mapped[str] = mapped_column(String(32))
+
+
+class ConceptMasteryRow(Base):
+    """Concept-level mastery tracking with confidence estimation and status transitions."""
+
+    __tablename__ = "concept_mastery"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    student_id: Mapped[str] = mapped_column(ForeignKey("students.id"), index=True)
+    concept: Mapped[str] = mapped_column(String(256), index=True)
+    mastery_score: Mapped[float] = mapped_column(Float, default=0.0)
+    confidence: Mapped[float] = mapped_column(Float, default=0.0)
+    status: Mapped[str] = mapped_column(String(32), default="not_attempted")
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    last_assessed_at: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    updated_at: Mapped[str] = mapped_column(String(32))
+
+
+class SocraticDialogueSession(Base):
+    """Stateful tracking of ongoing multi-turn Socratic problem-solving sessions."""
+
+    __tablename__ = "socratic_dialogue_sessions"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    student_id: Mapped[str] = mapped_column(ForeignKey("students.id"), index=True)
+    conversation_id: Mapped[str] = mapped_column(String(64), index=True)
+    concept: Mapped[str] = mapped_column(String(256), index=True)
+    problem_statement: Mapped[str] = mapped_column(Text)
+    current_step: Mapped[int] = mapped_column(Integer, default=1)
+    total_steps: Mapped[int] = mapped_column(Integer, default=3)
+    current_hint_level: Mapped[int] = mapped_column(Integer, default=0)
+    max_hint_level: Mapped[int] = mapped_column(Integer, default=4)
+    status: Mapped[str] = mapped_column(String(32), default="in_progress")
+    turn_count: Mapped[int] = mapped_column(Integer, default=0)
+    target_solution: Mapped[str] = mapped_column(Text, default="")
+    history_json: Mapped[list] = mapped_column(JSON, default=list)
+    created_at: Mapped[str] = mapped_column(String(32))
+    updated_at: Mapped[str] = mapped_column(String(32))
+
+
+StudentProfileRow = Student

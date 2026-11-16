@@ -80,7 +80,16 @@ class EvaluationAgent:
 
         for question in quiz.questions:
             submitted = answers.get(question.id)
-            if question.type == QuestionType.SUBJECTIVE:
+            if getattr(self._ctx, "quiz_engine", None) is not None:
+                correct, earned, _, _ = self._ctx.quiz_engine.grade_question(question, submitted)
+                if question.type == QuestionType.SUBJECTIVE:
+                    subjective_earned += earned
+                else:
+                    objective_earned += earned
+                per_topic[question.topic].append((correct, earned))
+                if not correct:
+                    weak_by_topic.append(question.topic)
+            elif question.type == QuestionType.SUBJECTIVE:
                 grade = await self._grade_subjective(question, submitted)
                 earned = question.points * grade.score
                 subjective_earned += earned
@@ -193,6 +202,59 @@ class EvaluationAgent:
             correct_count = sum(1 for ok, _ in results if ok)
             proficiency = round(correct_count / len(results), 4)
             self._ctx.student_repo.upsert_concept_score(student_id, topic, proficiency)
+
+            # Milestone 3: Evidence-based Bayesian mastery update
+            if getattr(self._ctx, "mastery_repo", None) is not None and student_id != "anonymous":
+                try:
+                    from app.schemas.enums import EvidenceType
+
+                    demonstrated = proficiency >= 0.70
+                    self._ctx.mastery_repo.record_evidence(
+                        student_id=student_id,
+                        concept=topic,
+                        evidence_type=EvidenceType.QUIZ_OBJECTIVE,
+                        score=proficiency,
+                        demonstrated=demonstrated,
+                        confidence=0.85,
+                        provenance={"quiz_id": quiz_id, "questions_count": len(results)},
+                    )
+                except Exception as e:
+                    logger.warning("Failed to record mastery evidence for %s: %e", topic, e)
+
+        # Milestone 3: Misconception detection & resolution tracking
+        if (
+            getattr(self._ctx, "misconception_detector", None) is not None
+            and student_id != "anonymous"
+        ):
+            try:
+                for q in quiz.questions:
+                    sub = answers.get(q.id)
+                    q_correct = any(
+                        ok for t, lst in per_topic.items() if t == q.topic for ok, _ in lst
+                    )
+                    if not q_correct and sub:
+                        detected = self._ctx.misconception_detector.detect(
+                            concept=q.topic,
+                            student_response=sub,
+                            correct_answer=q.correct_answer,
+                            question=q.question,
+                        )
+                        for d in detected:
+                            self._ctx.misconception_detector.register_misconception(
+                                student_id=student_id,
+                                concept=q.topic,
+                                misconception=d["misconception"],
+                                confidence=d.get("confidence", 0.85),
+                            )
+                    elif q_correct:
+                        self._ctx.misconception_detector.record_successful_demonstration(
+                            student_id, q.topic
+                        )
+            except Exception as e:
+                logger.warning(
+                    "Misconception detector tracking failed during quiz evaluation: %s", e
+                )
+
         self._ctx.progress_repo.add_snapshot(student_id, quiz.topic, evaluation.percent)
 
     # ------------------------------------------------------------ helpers --

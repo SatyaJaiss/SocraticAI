@@ -69,6 +69,28 @@ class PlannerAgent:
         )
 
         next_agent = self.route(output.intent)
+
+        # Milestone 3: Socratic Dialogue routing
+        conv_id = state.get("conversation_id") or ""
+        u_lower = user_input.lower()
+        if (
+            getattr(self._ctx, "socratic_repo", None) is not None
+            and conv_id
+            and student_id != "anonymous"
+        ):
+            active_socratic = self._ctx.socratic_repo.get_active_session(student_id, conv_id)
+            if active_socratic and not state.get("with_quiz"):
+                next_agent = Routes.SOCRATIC
+        if (
+            next_agent != Routes.SOCRATIC
+            and not state.get("with_quiz")
+            and any(
+                kw in u_lower
+                for kw in ["guide me", "walk me through", "solve step by step", "socratic"]
+            )
+        ):
+            next_agent = Routes.SOCRATIC
+
         updates: dict = {
             "intent": output.intent.value,
             "topic": state.get("topic") or output.topic,

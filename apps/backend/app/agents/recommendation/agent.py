@@ -41,8 +41,24 @@ class RecommendationAgent:
             or "- (no concept scores yet)"
         )
 
+        prereq_section = ""
+        if getattr(self._ctx, "prerequisite_engine", None) is not None:
+            prereq_recs = self._ctx.prerequisite_engine.generate_recommendations(
+                student_id, current_topic=state.get("topic") or ""
+            )
+            if prereq_recs:
+                prereq_section = (
+                    "Prerequisite Dependency Graph Recommendations:\n"
+                    + "\n".join(
+                        f"- {r.concept} (Priority {r.priority}, Action: {r.action_type}): {r.reason}"
+                        for r in prereq_recs[:4]
+                    )
+                    + "\n\n"
+                )
+
         user_prompt = (
             f"{profile_prompt_section(profile)}\n\n"
+            f"{prereq_section}"
             f"Concept scores:\n{score_lines}\n\n"
             f"Weak concepts: {', '.join(weak) or 'none identified'}\n"
             f"Latest quiz: {evaluation.get('percent') if evaluation else 'none'}"
@@ -50,11 +66,20 @@ class RecommendationAgent:
             f"Feedback: {evaluation.get('feedback') or 'none'}\n\n"
             f"{memory_prompt_section(self._ctx, student_id)}"
         )
-        rec = await self._ctx.llm.generate_json(
-            render_prompt("recommendation"),
-            user_prompt,
-            model_class=Recommendation,
-        )
+        try:
+            rec = await self._ctx.llm.generate_json(
+                render_prompt("recommendation"),
+                user_prompt,
+                model_class=Recommendation,
+            )
+        except Exception as e:
+            logger.warning("LLM recommendation failed: %s; falling back to graph engine.", e)
+            if getattr(self._ctx, "prerequisite_engine", None) is not None:
+                rec = self._ctx.prerequisite_engine.build_legacy_recommendation(
+                    student_id, current_topic=state.get("topic") or ""
+                )
+            else:
+                raise
         self._ctx.memory_repo.save_recommendation(student_id, rec)
 
         message = self._format_message(rec)

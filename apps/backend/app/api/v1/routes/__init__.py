@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from app.api.v1.routes import (
+    analytics,
     auth,
     chat,
     conversations,
@@ -10,10 +11,12 @@ from app.api.v1.routes import (
     documents,
     health,
     quizzes,
+    socratic,
     students,
 )
 
 __all__ = [
+    "analytics",
     "auth",
     "chat",
     "conversations",
@@ -21,5 +24,6 @@ __all__ = [
     "documents",
     "health",
     "quizzes",
+    "socratic",
     "students",
 ]

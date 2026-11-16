@@ -88,6 +88,8 @@ class StudentRepository(BaseRepository):
             student = session.get(Student, student_id)
             return self._to_profile(student) if student else None
 
+    get_student = get
+
     def get_or_404(self, student_id: str) -> StudentProfile:
         profile = self.get(student_id)
         if profile is None:

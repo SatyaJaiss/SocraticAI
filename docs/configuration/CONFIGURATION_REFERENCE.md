@@ -182,6 +182,66 @@ All variables can be overridden using environment variables or a `.env` file at 
 
 ---
 
+### 2.14 Tutoring & Socratic Dialogue Settings (`TutoringSettings`)
+
+| Variable Name | Type | Default Value | Description | Subsystem |
+|---|---|---|---|---|
+| `TUTORING_DEFAULT_STRATEGY` | `str` | `direct_instruction` | Default pedagogical strategy fallback. | Strategy Selector |
+| `TUTORING_DEFAULT_EXPLANATION_MODE` | `str` | `intermediate` | Default explanation depth and style. | Explanation Engine |
+| `TUTORING_MAX_SOCRATIC_TURNS` | `int` | `8` | Maximum step turns allowed in a guided Socratic dialogue session. | Socratic Engine |
+| `TUTORING_HINT_ESCALATION_THRESHOLD` | `int` | `2` | Number of consecutive mistakes before escalating hint scaffolding level. | Socratic Engine |
+| `TUTORING_STUCK_MISTAKE_THRESHOLD` | `int` | `3` | Number of mistakes before flagging a student as stuck (`is_stuck=True`). | Socratic Engine |
+| `TUTORING_ALLOW_DIRECT_ANSWERS_IN_SOCRATIC` | `bool` | `false` | When false, prevents direct solution leakage during Socratic dialogues. | Socratic Engine |
+
+---
+
+### 2.15 Concept Mastery Settings (`MasterySettings`)
+
+| Variable Name | Type | Default Value | Description | Subsystem |
+|---|---|---|---|---|
+| `MASTERY_THRESHOLD` | `float` | `0.80` | Minimum smoothed mastery score required for `mastered` status. | Mastery Repository |
+| `MASTERY_REVISION_THRESHOLD` | `float` | `0.60` | Score below which concept status transitions to `needs_revision`. | Mastery Repository |
+| `MASTERY_MIN_EVIDENCE_COUNT` | `int` | `3` | Minimum evidence data points required before declaring mastery. | Mastery Repository |
+| `MASTERY_CONFIDENCE_THRESHOLD` | `float` | `0.70` | Statistical confidence threshold $C(n)$ required for mastery. | Mastery Repository |
+| `MASTERY_ALPHA_SMOOTHING` | `float` | `0.30` | Weight $\alpha$ for Exponential Moving Average score updates. | Mastery Repository |
+| `MASTERY_CONFIDENCE_GROWTH_RATE` | `float` | `0.45` | Exponential growth rate $k$ in $C(n) = 1.0 - e^{-kn}$. | Mastery Repository |
+
+---
+
+### 2.16 Assessment & Quiz Settings (`AssessmentSettings`)
+
+| Variable Name | Type | Default Value | Description | Subsystem |
+|---|---|---|---|---|
+| `ASSESSMENT_DEFAULT_NUM_QUESTIONS` | `int` | `5` | Default number of questions generated per quiz session. | Quiz Engine |
+| `ASSESSMENT_PASS_PERCENTAGE` | `float` | `0.70` | Normalized score ratio required to pass an assessment. | Quiz Engine |
+| `ASSESSMENT_ALLOW_PARTIAL_CREDIT` | `bool` | `true` | Enables rubric criteria partial credit scoring for subjective questions. | Quiz Engine |
+| `ASSESSMENT_NUMERICAL_RELATIVE_TOLERANCE` | `float` | `0.01` | Maximum allowable relative error (1.0%) for numerical answers. | Quiz Engine |
+| `ASSESSMENT_NUMERICAL_ABSOLUTE_TOLERANCE` | `float` | `0.0001` | Absolute tolerance fallback for near-zero numerical comparisons. | Quiz Engine |
+| `ASSESSMENT_REQUIRE_RUBRIC_FOR_SUBJECTIVE` | `bool` | `true` | Enforces structured rubric criteria on open-ended questions. | Quiz Engine |
+
+---
+
+### 2.17 Prerequisite Recommendation Settings (`AdaptiveRecommendationSettings`)
+
+| Variable Name | Type | Default Value | Description | Subsystem |
+|---|---|---|---|---|
+| `RECOMMENDATION_MAX_RECOMMENDATIONS` | `int` | `5` | Maximum number of recommended concepts returned per query. | Recommendation Engine |
+| `RECOMMENDATION_PRIORITIZE_PREREQUISITES` | `bool` | `true` | Enforces recommending unmastered prerequisites before downstream topics. | Recommendation Engine |
+| `RECOMMENDATION_INCLUDE_REVIEW_CONCEPTS` | `bool` | `true` | Includes concepts in `needs_revision` status in recommendations. | Recommendation Engine |
+| `RECOMMENDATION_REMEDIAL_PRIORITY_WEIGHT` | `float` | `1.0` | Ranking priority weight assigned to prerequisite remedial gaps. | Recommendation Engine |
+
+---
+
+### 2.18 Misconception Tracking Settings (`MisconceptionSettings`)
+
+| Variable Name | Type | Default Value | Description | Subsystem |
+|---|---|---|---|---|
+| `MISCONCEPTION_DETECTION_ENABLED` | `bool` | `true` | Enables diagnostic misconception identification on student responses. | Misconception Detector |
+| `MISCONCEPTION_AUTO_RESOLVE_ON_MASTERY` | `bool` | `true` | Automatically resolves active misconceptions when concept is mastered. | Misconception Detector |
+| `MISCONCEPTION_MAX_ACTIVE_MISCONCEPTIONS` | `int` | `5` | Maximum number of unresolved misconceptions tracked in working context. | Misconception Detector |
+
+---
+
 ## 3. Environment-Specific Configurations
 
 ### 3.1 Recommended `.env.development`

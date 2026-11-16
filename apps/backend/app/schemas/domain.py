@@ -8,11 +8,16 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from app.schemas.enums import (
     DifficultyLevel,
+    EvidenceType,
+    ExplanationMode,
     LearningSpeed,
     LearningStyle,
+    MasteryStatus,
     MemoryFactType,
+    PrerequisiteRelation,
     QuestionType,
     StudentLevel,
+    TutoringStrategy,
 )
 
 
@@ -80,6 +85,10 @@ class QuizQuestion(BaseModel):
     correct_answer: str
     explanation: str = ""
     points: int = 1
+    concept: str = ""
+    numerical_tolerance: float = 0.01
+    numerical_tolerance_mode: str = "relative"  # "relative" | "absolute"
+    rubric: SubjectiveRubric | None = None
 
 
 class Quiz(BaseModel):
@@ -391,3 +400,126 @@ class ChatResponse(BaseModel):
     recommendations: Recommendation | None = None
     rag_sources: list[str] = Field(default_factory=list)
     messages: list[dict] = Field(default_factory=list)
+
+
+# --------------------------------------------------------------------------- #
+# Milestone 3: Adaptive Tutoring & Learning Intelligence Schemas
+# --------------------------------------------------------------------------- #
+
+
+class ConceptPrerequisiteSchema(BaseModel):
+    """Dependency relationship between two concepts."""
+
+    id: int | None = None
+    concept: str
+    prerequisite_concept: str
+    relationship_type: PrerequisiteRelation = PrerequisiteRelation.DIRECT
+    description: str = ""
+    created_at: str = ""
+
+
+class LearningEvidenceSchema(BaseModel):
+    """An event demonstrating or failing to demonstrate understanding."""
+
+    id: int | None = None
+    student_id: str
+    concept: str
+    evidence_type: EvidenceType
+    score: float = Field(ge=0.0, le=1.0)
+    demonstrated: bool
+    confidence: float = Field(ge=0.0, le=1.0, default=0.5)
+    provenance: dict[str, Any] = Field(default_factory=dict)
+    created_at: str = ""
+
+
+class ConceptMasterySchema(BaseModel):
+    """Evidence-based mastery estimate for a concept."""
+
+    concept: str
+    mastery_score: float = Field(ge=0.0, le=1.0, default=0.0)
+    confidence: float = Field(ge=0.0, le=1.0, default=0.0)
+    status: MasteryStatus = MasteryStatus.NOT_ATTEMPTED
+    attempts: int = 0
+    last_assessed_at: str | None = None
+    updated_at: str = ""
+
+
+class StrategySelectionResult(BaseModel):
+    """Pedagogical strategy selection decision."""
+
+    strategy: TutoringStrategy
+    explanation_mode: ExplanationMode = ExplanationMode.INTERMEDIATE
+    confidence: float = Field(ge=0.0, le=1.0, default=1.0)
+    reasoning: str = ""
+    target_concept: str = ""
+    prerequisites_needed: list[str] = Field(default_factory=list)
+
+
+class SocraticTurnResponse(BaseModel):
+    """One step in an active Socratic dialogue session."""
+
+    session_id: str
+    concept: str
+    current_step: int
+    total_steps: int
+    question: str
+    hint: str | None = None
+    hint_level: int = 0
+    is_completed: bool = False
+    is_stuck: bool = False
+    solution_revealed: bool = False
+    feedback: str = ""
+
+
+class SubjectiveRubric(BaseModel):
+    """Structured rubric criteria for subjective answer evaluation."""
+
+    conceptual_correctness_weight: float = 0.40
+    reasoning_weight: float = 0.30
+    completeness_weight: float = 0.30
+    key_points: list[str] = Field(default_factory=list)
+    misconception_indicators: list[str] = Field(default_factory=list)
+
+
+class SubjectiveGradingResult(BaseModel):
+    """Detailed grading of a subjective student response."""
+
+    score: float = Field(ge=0.0, le=1.0)
+    passed: bool
+    conceptual_score: float = Field(ge=0.0, le=1.0)
+    reasoning_score: float = Field(ge=0.0, le=1.0)
+    completeness_score: float = Field(ge=0.0, le=1.0)
+    missing_key_points: list[str] = Field(default_factory=list)
+    feedback: str
+    detected_misconceptions: list[str] = Field(default_factory=list)
+    uncertain: bool = False
+
+
+class RecommendationWithPrerequisites(BaseModel):
+    """A learning recommendation with explicit prerequisite validation."""
+
+    concept: str
+    priority: int = 1
+    reason: str
+    prerequisites_met: bool = True
+    missing_prerequisites: list[str] = Field(default_factory=list)
+    action_type: str = "learn"
+
+
+class LearningAnalyticsSummary(BaseModel):
+    """Comprehensive learning progress analytics distinguishing activity from mastery."""
+
+    student_id: str
+    total_turns: int = 0
+    quizzes_taken: int = 0
+    questions_attempted: int = 0
+    average_quiz_score: float = 0.0
+    highest_quiz_score: float = 0.0
+    concepts_attempted: int = 0
+    concepts_partially_understood: int = 0
+    concepts_mastered: int = 0
+    concepts_needing_revision: int = 0
+    concept_mastery_list: list[ConceptMasterySchema] = Field(default_factory=list)
+    active_misconceptions_count: int = 0
+    resolved_misconceptions_count: int = 0
+    demonstrated_improvement_score: float = 0.0
