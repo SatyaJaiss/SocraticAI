@@ -43,15 +43,35 @@ async def start_socratic_session(
     container: Container = Depends(get_container_dep),
 ) -> SocraticTurnResponse:
     """Initialize a guided Socratic dialogue session and formulate the first step question."""
+    # PII sanitization and input rails
+    redacted_prob, pii_ctx, _ = container.pii_service.redact_user_input(
+        payload.problem_statement, student_id=current_student.student_id
+    )
+    input_check = container.guardrails_service.validate_input(redacted_prob)
+    if not input_check.allowed:
+        return SocraticTurnResponse(
+            session_id="blocked",
+            concept=payload.concept,
+            current_step=0,
+            total_steps=payload.total_steps,
+            question=input_check.reason or "Request blocked by safety rails.",
+            hint_level=0,
+            is_stuck=False,
+            is_completed=False,
+        )
+
     cid = payload.conversation_id or "default"
-    return container.socratic_engine.start_session(
+    resp = container.socratic_engine.start_session(
         student_id=current_student.student_id,
         conversation_id=cid,
         concept=payload.concept,
-        problem_statement=payload.problem_statement,
+        problem_statement=redacted_prob,
         target_solution=payload.target_solution,
         total_steps=payload.total_steps,
     )
+    resp.question = container.pii_service.restore_response(resp.question, pii_ctx)
+    pii_ctx.clear()
+    return resp
 
 
 @router.post("/respond", response_model=SocraticTurnResponse)
@@ -69,10 +89,35 @@ async def respond_to_socratic_step(
             "Access denied: You cannot participate in another student's session"
         )
 
-    return container.socratic_engine.process_student_turn(
-        session_id=payload.session_id,
-        student_input=payload.response,
+    # PII sanitization and input rails
+    redacted_resp, pii_ctx, _ = container.pii_service.redact_user_input(
+        payload.response, student_id=current_student.student_id
     )
+    input_check = container.guardrails_service.validate_input(redacted_resp)
+    if not input_check.allowed:
+        return SocraticTurnResponse(
+            session_id=payload.session_id,
+            concept=session.concept,
+            current_step=session.current_step,
+            total_steps=session.total_steps,
+            question=input_check.reason or "Request blocked by safety rails.",
+            hint_level=session.hint_level,
+            is_stuck=False,
+            is_completed=False,
+        )
+
+    resp = container.socratic_engine.process_student_turn(
+        session_id=payload.session_id,
+        student_input=redacted_resp,
+    )
+    if resp.question:
+        resp.question = container.pii_service.restore_response(resp.question, pii_ctx)
+    if resp.hint:
+        resp.hint = container.pii_service.restore_response(resp.hint, pii_ctx)
+    if resp.feedback:
+        resp.feedback = container.pii_service.restore_response(resp.feedback, pii_ctx)
+    pii_ctx.clear()
+    return resp
 
 
 @router.post("/hint", response_model=SocraticTurnResponse)

@@ -242,6 +242,62 @@ All variables can be overridden using environment variables or a `.env` file at 
 
 ---
 
+### 2.19 PII Protection & De-Identification Settings (`PIISettings`)
+
+| Variable Name | Type | Default Value | Description | Subsystem |
+|---|---|---|---|---|
+| `PII_ENABLED` | `bool` | `true` | Enables automatic detection and redaction of PII before any external model call. | PII Subsystem |
+| `PII_STRATEGY` | `str` | `placeholder` | Redaction strategy: `placeholder` (`<PERSON_1>`), `mask`, or `hash`. | PII Subsystem |
+| `PII_RESTORE_OUTPUT` | `bool` | `true` | Restores placeholders back to original values in student-facing responses. | PII Subsystem |
+| `PII_AUDIT_ENABLED` | `bool` | `true` | Generates structured PII audit events for compliance tracking. | PII Subsystem |
+| `PII_EXCLUDE_FIELDS` | `list[str]` | `["student_id", "concept_id", "session_id"]` | Field identifiers excluded from generic PII redaction. | PII Subsystem |
+
+---
+
+### 2.20 NeMo Guardrails Settings (`GuardrailsSettings`)
+
+| Variable Name | Type | Default Value | Description | Subsystem |
+|---|---|---|---|---|
+| `GUARDRAILS_ENABLED` | `bool` | `true` | Enables multi-layer guardrail validation across input, retrieval, tool execution, and output. | NeMo Guardrails |
+| `GUARDRAILS_CONFIG_PATH` | `str` | `configs/guardrails` | Filesystem path to Colang rails configuration directory. | NeMo Guardrails |
+| `GUARDRAILS_BLOCK_ON_VIOLATION` | `bool` | `true` | Returns immediate safe refusal if an input/output safety violation is triggered. | NeMo Guardrails |
+| `GUARDRAILS_JAILBREAK_DETECTION` | `bool` | `true` | Activates regex & semantic heuristics to block adversarial jailbreak attempts. | NeMo Guardrails |
+| `GUARDRAILS_OUTPUT_FILTERING` | `bool` | `true` | Scans model outputs for credential leaks, internal system prompts, or harmful advice. | NeMo Guardrails |
+
+---
+
+### 2.21 TensorZero LLM Gateway Settings (`TensorZeroSettings`)
+
+| Variable Name | Type | Default Value | Description | Subsystem |
+|---|---|---|---|---|
+| `TENSORZERO_ENABLED` | `bool` | `false` | Enables centralized TensorZero gateway inference proxying for model routing. | TensorZero Gateway |
+| `TENSORZERO_GATEWAY_URL` | `str` | `http://localhost:3000` | HTTP base URL of the active TensorZero gateway instance. | TensorZero Gateway |
+| `TENSORZERO_TIMEOUT_SECONDS` | `float` | `30.0` | HTTP request timeout in seconds before triggering client-side retry or fallback. | TensorZero Gateway |
+| `TENSORZERO_MAX_RETRIES` | `int` | `2` | Maximum retry attempts for transient gateway timeouts or HTTP 5xx errors. | TensorZero Gateway |
+| `TENSORZERO_FALLBACK_TO_CLIENT` | `bool` | `true` | Automatically falls back to native direct LLM client on persistent gateway failure. | TensorZero Gateway |
+
+---
+
+### 2.22 OpenTelemetry Tracing Settings (`TelemetrySettings`)
+
+| Variable Name | Type | Default Value | Description | Subsystem |
+|---|---|---|---|---|
+| `OTEL_ENABLED` | `bool` | `true` | Enables OpenTelemetry distributed tracing and W3C context propagation. | Telemetry Subsystem |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | `str` | `http://localhost:4318` | OpenTelemetry Collector OTLP/HTTP endpoint URL. | Telemetry Subsystem |
+| `OTEL_SERVICE_NAME` | `str` | `socraticai-backend` | Service name tag attached to all emitted trace spans. | Telemetry Subsystem |
+| `OTEL_SAMPLE_RATE` | `float` | `1.0` | Trace sampling probability ratio (1.0 = 100% trace capture). | Telemetry Subsystem |
+
+---
+
+### 2.23 Prometheus Metrics Settings (`MetricsSettings`)
+
+| Variable Name | Type | Default Value | Description | Subsystem |
+|---|---|---|---|---|
+| `METRICS_ENABLED` | `bool` | `true` | Enables Prometheus metric collectors and the HTTP scrape endpoint. | Metrics Subsystem |
+| `METRICS_PATH` | `str` | `/metrics` | HTTP path where Prometheus text format metrics are exposed. | Metrics Subsystem |
+
+---
+
 ## 3. Environment-Specific Configurations
 
 ### 3.1 Recommended `.env.development`
@@ -253,6 +309,11 @@ LLM_PROVIDER=demo
 ROUTING_PROVIDER=deterministic
 CACHING_ENABLED=true
 DATABASE_URL=sqlite:///./socraticai_dev.db
+PII_ENABLED=true
+GUARDRAILS_ENABLED=true
+TENSORZERO_ENABLED=false
+OTEL_ENABLED=false
+METRICS_ENABLED=true
 ```
 
 ### 3.2 Recommended `.env.production`
@@ -272,5 +333,12 @@ CACHING_ENABLED=true
 CACHE_EMBEDDING_MAX_SIZE=100000
 CACHE_RETRIEVAL_MAX_SIZE=20000
 DATABASE_URL=sqlite:///./socraticai_prod.db
+PII_ENABLED=true
+GUARDRAILS_ENABLED=true
+TENSORZERO_ENABLED=true
+TENSORZERO_GATEWAY_URL=http://tensorzero-gateway:3000
+OTEL_ENABLED=true
+OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+METRICS_ENABLED=true
 ```
 

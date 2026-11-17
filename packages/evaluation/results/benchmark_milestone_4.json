@@ -1,0 +1,68 @@
+{
+  "timestamp": "2026-11-17 13:14:13",
+  "hardware_platform": "Windows AMD64 (12 CPUs)",
+  "python_version": "3.14.3",
+  "overhead_breakdown_ms": {
+    "gateway_overhead_ms": 0.104,
+    "guardrails_overhead_ms": 0.148,
+    "tracing_overhead_ms": 0.191,
+    "total_integrated_overhead_ms": 0.518
+  },
+  "scenarios": {
+    "baseline": {
+      "scenario_name": "1_Baseline",
+      "sample_count": 25,
+      "mean_latency_ms": 0.008,
+      "p50_latency_ms": 0.006,
+      "p95_latency_ms": 0.014,
+      "p99_latency_ms": 0.041,
+      "overhead_vs_baseline_ms": 0.0,
+      "tokens_per_request": 350,
+      "estimated_cost_per_1k_requests_usd": 0.105
+    },
+    "baseline_tensorzero": {
+      "scenario_name": "2_Baseline_TensorZero",
+      "sample_count": 25,
+      "mean_latency_ms": 0.112,
+      "p50_latency_ms": 0.103,
+      "p95_latency_ms": 0.164,
+      "p99_latency_ms": 0.291,
+      "overhead_vs_baseline_ms": 0.104,
+      "tokens_per_request": 350,
+      "estimated_cost_per_1k_requests_usd": 0.105
+    },
+    "baseline_nemo": {
+      "scenario_name": "3_Baseline_NeMo",
+      "sample_count": 25,
+      "mean_latency_ms": 0.156,
+      "p50_latency_ms": 0.146,
+      "p95_latency_ms": 0.199,
+      "p99_latency_ms": 0.24,
+      "overhead_vs_baseline_ms": 0.148,
+      "tokens_per_request": 350,
+      "estimated_cost_per_1k_requests_usd": 0.105
+    },
+    "baseline_opentelemetry": {
+      "scenario_name": "4_Baseline_OpenTelemetry",
+      "sample_count": 25,
+      "mean_latency_ms": 0.199,
+      "p50_latency_ms": 0.229,
+      "p95_latency_ms": 0.309,
+      "p99_latency_ms": 0.496,
+      "overhead_vs_baseline_ms": 0.191,
+      "tokens_per_request": 350,
+      "estimated_cost_per_1k_requests_usd": 0.105
+    },
+    "full_integrated_pipeline": {
+      "scenario_name": "5_Full_Integrated_Pipeline",
+      "sample_count": 25,
+      "mean_latency_ms": 0.526,
+      "p50_latency_ms": 0.5,
+      "p95_latency_ms": 0.729,
+      "p99_latency_ms": 0.849,
+      "overhead_vs_baseline_ms": 0.518,
+      "tokens_per_request": 350,
+      "estimated_cost_per_1k_requests_usd": 0.105
+    }
+  }
+}

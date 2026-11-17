@@ -1,0 +1,22 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "alerts.yml"
+
+scrape_configs:
+  - job_name: "socraticai_backend"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["backend:8000"]
+        labels:
+          service: "socraticai-backend"
+          environment: "production"
+
+  - job_name: "tensorzero_gateway"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["tensorzero:3000"]
+        labels:
+          service: "tensorzero-gateway"

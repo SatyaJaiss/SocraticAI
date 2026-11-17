@@ -79,6 +79,26 @@ async def chat(
         )
         conversation_id = new_session.id
 
+    # 1.1 Mandatory PII Redaction Boundary: sanitize input before ANY model/memory processing
+    redacted_message, pii_ctx, _ = container.pii_service.redact_user_input(
+        req.message, student_id=current_student.student_id
+    )
+
+    # 1.2 NVIDIA NeMo Input Guardrail Validation
+    input_check = container.guardrails_service.validate_input(redacted_message)
+    if not input_check.allowed:
+        refusal = (
+            input_check.reason or "I cannot process this request as it violates safety guidelines."
+        )
+        return ChatResponse(
+            student_id=req.student_id,
+            conversation_id=conversation_id,
+            intent="blocked_by_guardrails",
+            topic="",
+            lesson=None,
+            messages=[{"role": "assistant", "content": refusal}],
+        )
+
     # 2. Load recent conversational history using configured token/turn budget
     history_limit = container.settings.conversation.history_limit
     history_records = container.conversation_repo.list_messages(
@@ -99,13 +119,13 @@ async def chat(
     # 3. Retrieve layered cross-session memories and assemble token-budgeted prompt
     contextual_data = container.memory_manager.retrieve_contextual_memories(
         student_id=current_student.student_id,
-        query=req.message,
+        query=redacted_message,
     )
     raw_memories = contextual_data.get("episodic_memories") or []
     semantic_profile = contextual_data.get("semantic_profile") or {}
 
     assembled = container.context_builder.build_context(
-        user_message=req.message,
+        user_message=redacted_message,
         history_messages=historical_messages,
         episodic_memories=raw_memories,
         semantic_profile=semantic_profile,
@@ -124,6 +144,8 @@ async def chat(
         assembled_prompt=assembled.assembled_prompt,
         token_counts=assembled.token_counts,
     )
+    # Ensure state carries the sanitized input
+    initial_state["user_input"] = redacted_message
     config = {"configurable": {"thread_id": conversation_id}}
 
     try:
@@ -132,7 +154,38 @@ async def chat(
         logger.error("Tutoring graph execution failed: %s", exc, exc_info=True)
         raise
 
-    # 5. Periodic cross-session consolidation trigger
+    # 5. Output Rails Validation & Controlled Safe PII Restoration
+    raw_lesson = final.get("lesson")
+    if raw_lesson is not None:
+        if hasattr(raw_lesson, "explanation"):
+            out_check = container.guardrails_service.validate_output(raw_lesson.explanation)
+            if not out_check.allowed:
+                raw_lesson.explanation = (
+                    "I apologize, but this response was withheld by content safety policies."
+                )
+            raw_lesson.explanation = container.pii_service.restore_response(
+                raw_lesson.explanation, pii_ctx
+            )
+        elif isinstance(raw_lesson, dict) and "explanation" in raw_lesson:
+            content = raw_lesson.get("explanation", "")
+            out_check = container.guardrails_service.validate_output(content)
+            if not out_check.allowed:
+                content = "I apologize, but this response was withheld by content safety policies."
+            raw_lesson["explanation"] = container.pii_service.restore_response(content, pii_ctx)
+        final["lesson"] = raw_lesson
+
+    final_messages = list(final.get("messages") or [])
+    for msg in final_messages:
+        if isinstance(msg, dict) and msg.get("role") == "assistant" and msg.get("content"):
+            content = msg["content"]
+            out_check = container.guardrails_service.validate_output(content)
+            if not out_check.allowed:
+                content = "I apologize, but this response was withheld by content safety policies."
+            msg["content"] = container.pii_service.restore_response(content, pii_ctx)
+
+    pii_ctx.clear()
+
+    # 6. Periodic cross-session consolidation trigger
     summary_trigger = container.settings.conversation.summary_trigger_turns
     if len(history_records) > 0 and len(history_records) % summary_trigger == 0:
         try:

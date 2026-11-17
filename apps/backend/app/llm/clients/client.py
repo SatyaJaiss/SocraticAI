@@ -165,15 +165,27 @@ class LLMClient:
         return self._settings
 
 
-def build_llm_client(settings: LLMSettings) -> LLMClient:
+def build_llm_client(settings: LLMSettings, tensorzero_settings: Any | None = None) -> Any:
     """Return the appropriate client for ``settings.provider``.
 
     The ``demo`` provider short-circuits to a deterministic, offline client so
     the entire application can be exercised without any external API key.
+    When ``tensorzero`` is requested or enabled, inference is routed through the
+    TensorZero gateway with automatic resilient fallback.
     """
     provider = (settings.provider or "openai").strip().lower()
     if provider == "demo":
         from app.llm.providers.demo import DemoLLMClient
 
         return DemoLLMClient(settings)
+
+    if provider == "tensorzero":
+        from app.core.config import TensorZeroSettings
+        from app.llm.gateway.tensorzero_client import TensorZeroGatewayClient
+        from app.llm.providers.demo import DemoLLMClient
+
+        tz_settings = tensorzero_settings or TensorZeroSettings(enabled=True)
+        fallback = DemoLLMClient(settings)
+        return TensorZeroGatewayClient(tz_settings, fallback_client=fallback)
+
     return LLMClient(settings)

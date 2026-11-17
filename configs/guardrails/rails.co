@@ -1,0 +1,16 @@
+define flow check jailbreak
+  $is_jailbreak = execute check_jailbreak
+  if $is_jailbreak
+    bot refuse jailbreak
+    stop
+
+define flow check input length
+  if len($user_message) > 4000
+    bot refuse long input
+    stop
+
+define bot refuse jailbreak
+  "I cannot process this request as it violates safety guidelines or attempts to bypass system instructions."
+
+define bot refuse long input
+  "Your message exceeds the maximum allowed length of 4000 characters. Please shorten your question."

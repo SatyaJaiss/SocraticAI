@@ -1,0 +1,51 @@
+# TensorZero Gateway Configuration for SocraticAI
+[gateway]
+bind_address = "0.0.0.0:3000"
+
+[models.gpt_4o_mini]
+routing = ["openai"]
+
+[providers.openai]
+type = "openai"
+model = "gpt-4o-mini"
+
+[models.gemini_2_5_flash]
+routing = ["gemini"]
+
+[providers.gemini]
+type = "google"
+model = "gemini-2.5-flash"
+
+[models.demo_tutor]
+routing = ["demo"]
+
+[providers.demo]
+type = "dummy"
+model = "demo-tutor"
+
+# Centralized Generative Tutoring Function
+[functions.tutor_chat]
+type = "chat"
+
+[functions.tutor_chat.variants.default]
+type = "chat_completion"
+model = "gpt_4o_mini"
+temperature = 0.7
+
+[functions.tutor_chat.variants.fast]
+type = "chat_completion"
+model = "gemini_2_5_flash"
+temperature = 0.5
+
+[functions.tutor_chat.variants.offline]
+type = "chat_completion"
+model = "demo_tutor"
+
+# Centralized JSON Structured Output Function
+[functions.tutor_json]
+type = "json"
+
+[functions.tutor_json.variants.default]
+type = "chat_completion"
+model = "gpt_4o_mini"
+temperature = 0.2

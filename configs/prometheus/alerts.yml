@@ -1,0 +1,38 @@
+groups:
+  - name: socraticai_alerts
+    rules:
+      - alert: HighAPIErrorRate
+        expr: rate(socraticai_api_errors_total[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Sustained high API error rate detected"
+          description: "API errors on {{ $labels.endpoint }} exceeded 5% over 5 minutes."
+
+      - alert: AbnormalLLMLatency
+        expr: histogram_quantile(0.95, rate(socraticai_llm_gateway_latency_seconds_bucket[5m])) > 10.0
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Abnormal LLM Gateway latency"
+          description: "95th percentile LLM latency exceeded 10 seconds for provider {{ $labels.provider }}."
+
+      - alert: HighGuardrailBlockRate
+        expr: rate(socraticai_guardrails_blocked_requests_total[5m]) > 0.20
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Spike in Guardrails blocked requests"
+          description: "Guardrails blocking requests at elevated rate (>20%) on rail {{ $labels.rail_type }}."
+
+      - alert: LLMGatewayFallbackRate
+        expr: rate(socraticai_llm_fallback_total[5m]) > 0.10
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Elevated LLM Gateway fallback rate"
+          description: "TensorZero gateway fallback invoked at rate >10% due to {{ $labels.reason }}."

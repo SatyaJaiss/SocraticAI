@@ -21,9 +21,11 @@ from app.repositories.student_repository import StudentRepository
 if TYPE_CHECKING:
     from app.cache.manager import CacheManager
     from app.context.builder import ContextBuilder
+    from app.guardrails.service import NeMoGuardrailsService
     from app.memory.manager import MemoryManager
     from app.rag.citation.verifier import CitationVerifier
     from app.routing.intent_router import JevIntentRouter
+    from app.security.pii.service import PIIProtectionService
     from app.tutoring.analytics_service import LearningAnalyticsService
     from app.tutoring.explanation_engine import AdaptiveExplanationEngine
     from app.tutoring.misconception_detector import MisconceptionDetector
@@ -61,3 +63,5 @@ class AgentContext:
     prerequisite_engine: PrerequisiteRecommendationEngine | None = None
     quiz_engine: AdaptiveQuizEngine | None = None
     analytics_service: LearningAnalyticsService | None = None
+    pii_service: PIIProtectionService | None = None
+    guardrails_service: NeMoGuardrailsService | None = None

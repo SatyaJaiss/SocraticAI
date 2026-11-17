@@ -69,7 +69,18 @@ class Container:
         self.socratic_repo = SocraticRepository(self.db)
 
         self.cache = CacheManager(self.settings.cache)
-        self.llm = build_llm_client(self.settings.llm)
+        base_llm = build_llm_client(self.settings.llm)
+        if self.settings.tensorzero.enabled:
+            from app.llm.gateway.tensorzero_client import TensorZeroGatewayClient
+
+            self.llm = TensorZeroGatewayClient(
+                self.settings.tensorzero,
+                fallback_client=base_llm,
+                full_settings=self.settings,
+            )
+        else:
+            self.llm = base_llm
+
         self.rag = RAGService(
             self.settings.vector_store,
             cache_manager=self.cache,
@@ -121,6 +132,15 @@ class Container:
             student_repo=self.student_repo,
             misconception_detector=self.misconception_detector,
         )
+
+        # Milestone 4: Production Services
+        from app.guardrails.service import NeMoGuardrailsService
+        from app.security.pii.service import PIIProtectionService
+        from app.telemetry.tracing import setup_telemetry
+
+        self.pii_service = PIIProtectionService(self.settings.pii)
+        self.guardrails_service = NeMoGuardrailsService(self.settings.guardrails)
+        self.tracer = setup_telemetry(self.settings.telemetry)
 
         try:
             self.mastery_repo.seed_default_curriculum()
@@ -175,6 +195,8 @@ class Container:
             prerequisite_engine=self.prerequisite_engine,
             quiz_engine=self.quiz_engine,
             analytics_service=self.analytics_service,
+            pii_service=self.pii_service,
+            guardrails_service=self.guardrails_service,
         )
 
     def dispose(self) -> None:

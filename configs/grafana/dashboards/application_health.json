@@ -1,0 +1,47 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "title": "HTTP Requests Total",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 0 },
+      "targets": [{ "expr": "sum(socraticai_http_requests_total)", "legendFormat": "Requests" }]
+    },
+    {
+      "title": "Active Requests In-Progress",
+      "type": "gauge",
+      "gridPos": { "h": 6, "w": 6, "x": 6, "y": 0 },
+      "targets": [{ "expr": "sum(socraticai_http_requests_in_progress)", "legendFormat": "Active" }]
+    },
+    {
+      "title": "API Error Count",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 12, "y": 0 },
+      "targets": [{ "expr": "sum(socraticai_api_errors_total)", "legendFormat": "Errors" }]
+    },
+    {
+      "title": "HTTP Request Latency (p50, p95, p99)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 18, "x": 0, "y": 6 },
+      "targets": [
+        { "expr": "histogram_quantile(0.50, sum(rate(socraticai_http_request_duration_seconds_bucket[5m])) by (le))", "legendFormat": "p50" },
+        { "expr": "histogram_quantile(0.95, sum(rate(socraticai_http_request_duration_seconds_bucket[5m])) by (le))", "legendFormat": "p95" },
+        { "expr": "histogram_quantile(0.99, sum(rate(socraticai_http_request_duration_seconds_bucket[5m])) by (le))", "legendFormat": "p99" }
+      ]
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["socraticai", "health"],
+  "time": { "from": "now-1h", "to": "now" },
+  "title": "SocraticAI — Application Health & API",
+  "uid": "socraticai_app_health",
+  "version": 1
+}

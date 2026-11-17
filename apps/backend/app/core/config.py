@@ -407,6 +407,74 @@ class MisconceptionSettings(BaseSettings):
     prevent_duplicate_active: bool = True
 
 
+class PIISettings(BaseSettings):
+    """Personal Identifiable Information (PII) protection and redaction settings."""
+
+    model_config = SettingsConfigDict(env_prefix="PII_", extra="ignore", env_file=_ENV_FILE)
+
+    enabled: bool = True
+    enabled_categories: list[str] = [
+        "PERSON",
+        "EMAIL",
+        "PHONE",
+        "ADDRESS",
+        "GOVERNMENT_ID",
+        "FINANCIAL",
+        "SENSITIVE_ID",
+    ]
+    escape_html: bool = True
+    strict_restoration: bool = False
+
+
+class GuardrailsSettings(BaseSettings):
+    """NVIDIA NeMo Guardrails configuration settings."""
+
+    model_config = SettingsConfigDict(env_prefix="GUARDRAILS_", extra="ignore", env_file=_ENV_FILE)
+
+    enabled: bool = True
+    config_path: str = "configs/guardrails"
+    max_input_length: int = 4000
+    check_retrieval: bool = True
+    check_execution: bool = True
+    check_output: bool = True
+
+
+class TensorZeroSettings(BaseSettings):
+    """TensorZero LLM gateway configuration settings."""
+
+    model_config = SettingsConfigDict(env_prefix="TENSORZERO_", extra="ignore", env_file=_ENV_FILE)
+
+    enabled: bool = False
+    gateway_url: str = "http://localhost:3000"
+    timeout_seconds: float = 30.0
+    default_chat_function: str = "tutor_chat"
+    default_json_function: str = "tutor_json"
+    default_variant: str = "default"
+    max_retries: int = 2
+
+
+class TelemetrySettings(BaseSettings):
+    """OpenTelemetry distributed tracing configuration settings."""
+
+    model_config = SettingsConfigDict(env_prefix="OTEL_", extra="ignore", env_file=_ENV_FILE)
+
+    enabled: bool = True
+    service_name: str = "socraticai"
+    service_version: str = "1.0.0"
+    environment: str = "development"
+    otlp_endpoint: str | None = None
+    debug_console: bool = False
+
+
+class MetricsSettings(BaseSettings):
+    """Prometheus metrics configuration settings."""
+
+    model_config = SettingsConfigDict(env_prefix="METRICS_", extra="ignore", env_file=_ENV_FILE)
+
+    enabled: bool = True
+    endpoint: str = "/metrics"
+
+
 class Settings(BaseSettings):
     """Aggregate settings object injected across the whole application."""
 
@@ -447,6 +515,11 @@ class Settings(BaseSettings):
         default_factory=AdaptiveRecommendationSettings
     )
     misconception: MisconceptionSettings = Field(default_factory=MisconceptionSettings)
+    pii: PIISettings = Field(default_factory=PIISettings)
+    guardrails: GuardrailsSettings = Field(default_factory=GuardrailsSettings)
+    tensorzero: TensorZeroSettings = Field(default_factory=TensorZeroSettings)
+    telemetry: TelemetrySettings = Field(default_factory=TelemetrySettings)
+    metrics: MetricsSettings = Field(default_factory=MetricsSettings)
     prompts_dir: Path = Field(default_factory=lambda: _PROJECT_ROOT / "configs" / "prompts")
 
 

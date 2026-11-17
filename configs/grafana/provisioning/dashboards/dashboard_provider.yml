@@ -1,0 +1,12 @@
+apiVersion: 1
+
+providers:
+  - name: "SocraticAI Dashboards"
+    orgId: 1
+    folder: "SocraticAI"
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards/json

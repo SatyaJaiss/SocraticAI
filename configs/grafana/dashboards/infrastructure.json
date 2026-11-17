@@ -1,0 +1,43 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "title": "Process Resident Memory (RSS)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [{ "expr": "process_resident_memory_bytes", "legendFormat": "RSS Memory (Bytes)" }]
+    },
+    {
+      "title": "Process CPU Usage Seconds",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [{ "expr": "rate(process_cpu_seconds_total[1m])", "legendFormat": "CPU Seconds / Sec" }]
+    },
+    {
+      "title": "Open File Descriptors",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [{ "expr": "process_open_fds", "legendFormat": "Open FDs" }]
+    },
+    {
+      "title": "Process Uptime (Hours)",
+      "type": "stat",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [{ "expr": "(time() - process_start_time_seconds) / 3600", "legendFormat": "Uptime (Hours)" }]
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["socraticai", "system", "resources"],
+  "time": { "from": "now-1h", "to": "now" },
+  "title": "SocraticAI — Infrastructure & Resource Monitoring",
+  "uid": "socraticai_infrastructure",
+  "version": 1
+}

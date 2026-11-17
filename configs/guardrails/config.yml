@@ -1,0 +1,10 @@
+models:
+  - type: main
+    engine: demo
+    model: demo-tutor
+
+rails:
+  input:
+    flows:
+      - check jailbreak
+      - check input length

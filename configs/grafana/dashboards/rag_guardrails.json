@@ -1,0 +1,60 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "title": "Guardrails Total Executions",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 0 },
+      "targets": [{ "expr": "sum(socraticai_guardrails_executions_total)", "legendFormat": "Executions" }]
+    },
+    {
+      "title": "Blocked Requests (Security Violations)",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 6, "y": 0 },
+      "targets": [{ "expr": "sum(socraticai_guardrails_blocked_requests_total)", "legendFormat": "Blocked" }]
+    },
+    {
+      "title": "PII Entities Redacted",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 12, "y": 0 },
+      "targets": [{ "expr": "sum(socraticai_guardrails_pii_redacted_total)", "legendFormat": "Redacted Entities" }]
+    },
+    {
+      "title": "RAG Retrieval Failures",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 18, "y": 0 },
+      "targets": [{ "expr": "sum(socraticai_rag_retrieval_failures_total)", "legendFormat": "Failures" }]
+    },
+    {
+      "title": "RAG Retrieval & Reranking Latency (p95)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+      "targets": [
+        { "expr": "histogram_quantile(0.95, sum(rate(socraticai_rag_retrieval_latency_seconds_bucket[5m])) by (le))", "legendFormat": "Retrieval p95" },
+        { "expr": "histogram_quantile(0.95, sum(rate(socraticai_rag_reranking_latency_seconds_bucket[5m])) by (le))", "legendFormat": "Reranking p95" }
+      ]
+    },
+    {
+      "title": "PII Redactions by Category",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+      "targets": [
+        { "expr": "sum(rate(socraticai_guardrails_pii_redacted_total[5m])) by (category)", "legendFormat": "{{category}}" }
+      ]
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["socraticai", "guardrails", "rag", "pii"],
+  "time": { "from": "now-1h", "to": "now" },
+  "title": "SocraticAI — RAG, Guardrails & PII Security",
+  "uid": "socraticai_rag_guardrails",
+  "version": 1
+}

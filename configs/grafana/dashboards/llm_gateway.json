@@ -1,0 +1,60 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "title": "LLM Inference Requests",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 0 },
+      "targets": [{ "expr": "sum(socraticai_llm_inference_requests_total)", "legendFormat": "Inferences" }]
+    },
+    {
+      "title": "Gateway Fallbacks",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 6, "y": 0 },
+      "targets": [{ "expr": "sum(socraticai_llm_fallback_total)", "legendFormat": "Fallbacks" }]
+    },
+    {
+      "title": "Provider Failures",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 12, "y": 0 },
+      "targets": [{ "expr": "sum(socraticai_llm_provider_failures_total)", "legendFormat": "Failures" }]
+    },
+    {
+      "title": "Total Tokens Consumed",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 18, "y": 0 },
+      "targets": [{ "expr": "sum(socraticai_llm_tokens_consumed_total)", "legendFormat": "Tokens" }]
+    },
+    {
+      "title": "LLM Gateway Latency (p50, p95)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+      "targets": [
+        { "expr": "histogram_quantile(0.50, sum(rate(socraticai_llm_gateway_latency_seconds_bucket[5m])) by (le))", "legendFormat": "p50" },
+        { "expr": "histogram_quantile(0.95, sum(rate(socraticai_llm_gateway_latency_seconds_bucket[5m])) by (le))", "legendFormat": "p95" }
+      ]
+    },
+    {
+      "title": "Token Consumption by Provider",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+      "targets": [
+        { "expr": "sum(rate(socraticai_llm_tokens_consumed_total[5m])) by (provider, token_type)", "legendFormat": "{{provider}} - {{token_type}}" }
+      ]
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["socraticai", "tensorzero", "llm"],
+  "time": { "from": "now-1h", "to": "now" },
+  "title": "SocraticAI — LLM Gateway & Inference (TensorZero)",
+  "uid": "socraticai_llm_gateway",
+  "version": 1
+}
