@@ -72,3 +72,12 @@ Thumbs.db
 # --- Generated charts (regenerate: python experiments/run_experiments.py) ------
 experiments/results/graphs/
 evaluation/results/graphs/
+
+# --- Scratch & temporary files -------------------------------------------------
+scratch/
+
+# --- Documentation (only docs/audit/GAP_ANALYSIS.md tracked in repo) -----------
+docs/*
+!docs/audit/
+docs/audit/*
+!docs/audit/GAP_ANALYSIS.md
