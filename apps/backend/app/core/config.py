@@ -413,17 +413,32 @@ class PIISettings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="PII_", extra="ignore", env_file=_ENV_FILE)
 
     enabled: bool = True
-    enabled_categories: list[str] = [
-        "PERSON",
-        "EMAIL",
-        "PHONE",
-        "ADDRESS",
-        "GOVERNMENT_ID",
-        "FINANCIAL",
-        "SENSITIVE_ID",
-    ]
+    enabled_categories: Annotated[list[str], NoDecode] = Field(
+        default_factory=lambda: [
+            "PERSON",
+            "EMAIL",
+            "PHONE",
+            "ADDRESS",
+            "GOVERNMENT_ID",
+            "FINANCIAL",
+            "SENSITIVE_ID",
+        ]
+    )
     escape_html: bool = True
     strict_restoration: bool = False
+
+    @field_validator("enabled_categories", mode="before")
+    @classmethod
+    def _split_csv(cls, value: Any) -> Any:
+        if isinstance(value, str):
+            if value.startswith("[") and value.endswith("]"):
+                import json
+                try:
+                    return json.loads(value)
+                except Exception:
+                    pass
+            return [cat.strip() for cat in value.split(",") if cat.strip()]
+        return value
 
 
 class GuardrailsSettings(BaseSettings):

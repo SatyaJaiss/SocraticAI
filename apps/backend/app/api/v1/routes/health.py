@@ -18,6 +18,7 @@ class HealthResponse(BaseModel):
 
 
 @router.get("/health", response_model=HealthResponse)
+@router.get("/api/v1/health", response_model=HealthResponse)
 async def health(container: Container = Depends(get_container_dep)) -> HealthResponse:
     return HealthResponse(
         status="ok",

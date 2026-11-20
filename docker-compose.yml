@@ -27,7 +27,7 @@ services:
       - ./logs:/app/logs
       - ./configs:/app/configs
     healthcheck:
-      test: ["CMD-SHELL", "python -c 'import urllib.request; urllib.request.urlopen(\"http://localhost:8000/api/v1/health\")'"]
+      test: ["CMD-SHELL", "python -c 'import urllib.request; urllib.request.urlopen(\"http://localhost:8000/health\")'"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -85,7 +85,7 @@ services:
       - "3001:3000"
     volumes:
       - ./configs/grafana/provisioning:/etc/grafana/provisioning:ro
-      - ./configs/grafana/dashboards:/etc/grafana/provisioning/dashboards/json:ro
+      - ./configs/grafana/dashboards:/etc/grafana/dashboards:ro
       - grafana-data:/var/lib/grafana
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
