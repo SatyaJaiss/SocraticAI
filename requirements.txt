@@ -53,3 +53,6 @@ pandas>=2.2,<3.0                      # progress aggregation
 numpy>=1.26,<3.0
 plotly>=5.22,<7.0                     # dashboard charts
 streamlit>=1.40,<2.0                  # dashboard UI
+
+# --- Gateway Client -----------------------------------------------------------
+tensorzero>=2026.6.0

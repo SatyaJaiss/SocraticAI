@@ -6,12 +6,15 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONPATH=/app
 
+# Install uv for fast, reliable dependency resolution
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt ./
-RUN pip install --no-cache-dir streamlit httpx pandas plotly
+RUN uv pip install --system --no-cache streamlit httpx pandas plotly
 
 COPY apps/frontend ./apps/frontend
 COPY .streamlit ./.streamlit
