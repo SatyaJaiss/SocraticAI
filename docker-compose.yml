@@ -58,10 +58,7 @@ services:
     container_name: socraticai-tensorzero
     ports:
       - "3000:3000"
-    volumes:
-      - ./configs/tensorzero/tensorzero.toml:/app/config/tensorzero.toml:ro
-    environment:
-      - TENSORZERO_CONFIG_FILE=/app/config/tensorzero.toml
+    command: ["--default-config"]
     restart: unless-stopped
 
   prometheus:

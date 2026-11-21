@@ -1,50 +1,70 @@
-"""SocraticAI — Streamlit dashboard.
+"""SocraticAI — Streamlit Dashboard and AI Tutoring Platform.
 
 Pages
 -----
-* **Chat** — talk to the AI tutor (optionally produce a follow-up practice quiz).
-* **Quiz** — answer the latest generated quiz and get a graded evaluation.
-* **Dashboard** — progress charts, weak concepts, memory and recommendations.
-* **Documents** — upload PDF/TXT/MD notes and search them during lessons (RAG).
-
-Run with ``streamlit run apps/frontend/app.py`` from the project root.
+* **AI Tutor** — interactive conversation and Socratic guided learning.
+* **Practice Quiz** — answer practice quizzes and get graded evaluation.
+* **Learning Dashboard** — progress charts, weak concepts, and recommendations.
+* **Study Notes (RAG)** — upload notes (PDF/TXT/MD) and index for RAG.
 """
 
 from __future__ import annotations
 
-import streamlit as st
+import sys
+from pathlib import Path
 
-from apps.frontend.components.sidebar import render_sidebar
-from apps.frontend.pages.chat import render_chat
-from apps.frontend.pages.dashboard import render_dashboard
-from apps.frontend.pages.documents import render_documents
-from apps.frontend.pages.quiz import render_quiz
+# Ensure repository root is on sys.path
+root_dir = Path(__file__).resolve().parent.parent.parent
+if str(root_dir) not in sys.path:
+    sys.path.insert(0, str(root_dir))
+
+import streamlit as st
+from apps.frontend.components.sidebar import render_sidebar_session_info
 from apps.frontend.utils.state import init_state
 
 
 def main() -> None:
     st.set_page_config(
-        page_title="SocraticAI",
+        page_title="SocraticAI — AI Personal Tutor",
         page_icon="🎓",
         layout="wide",
         initial_sidebar_state="expanded",
     )
     init_state()
 
-    st.title("🎓 SocraticAI — AI Personal Tutor")
+    # Streamlit Navigation with app_pages per developing-with-streamlit skill
+    pages = [
+        st.Page(
+            "app_pages/chat.py",
+            title="AI Tutor",
+            icon=":material/chat:",
+            default=True,
+            help="Interactive Socratic conversation and personalized tutoring.",
+        ),
+        st.Page(
+            "app_pages/quiz.py",
+            title="Practice Quiz",
+            icon=":material/quiz:",
+            help="Take adaptive quizzes and review graded feedback.",
+        ),
+        st.Page(
+            "app_pages/dashboard.py",
+            title="Learning Dashboard",
+            icon=":material/analytics:",
+            help="Track score history, mastery, and weak concepts.",
+        ),
+        st.Page(
+            "app_pages/documents.py",
+            title="Study Notes (RAG)",
+            icon=":material/menu_book:",
+            help="Manage uploaded course materials and lecture notes.",
+        ),
+    ]
 
-    page = render_sidebar()
-
-    if page == "Chat":
-        render_chat()
-    elif page == "Quiz":
-        render_quiz()
-    elif page == "Dashboard":
-        render_dashboard()
-    else:
-        render_documents()
+    nav = st.navigation(pages, position="sidebar")
+    render_sidebar_session_info()
+    nav.run()
 
 
 if __name__ == "__main__":
     main()
-
