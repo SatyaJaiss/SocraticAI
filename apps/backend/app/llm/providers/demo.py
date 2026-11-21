@@ -112,6 +112,57 @@ class DemoLLMClient:
                 return None
         return None
 
+    @classmethod
+    def _sanitize_topic(cls, text: str) -> str:
+        """Sanitize an extracted topic string:
+        - Strip memory tags like (conversation_summary), (concept), (fact), (entity).
+        - Strip conversational prefixes/question stems (e.g. 'what is', 'explain', 'tell me about').
+        - Strip trailing and leading punctuation (?, !, ., quotes, bullets).
+        - Ensure clean capitalization (e.g. 'what is gateway?' -> 'Gateway').
+        """
+        if not text:
+            return "General"
+
+        # Remove internal memory tags e.g. (conversation_summary), (concept)
+        cleaned = re.sub(
+            r"[\(\[](?:conversation_summary|concept|fact|entity|memory)[\)\]]",
+            "",
+            text,
+            flags=re.IGNORECASE,
+        )
+
+        # Remove leading bullets, list markers, dashes
+        cleaned = re.sub(r"^\s*[-*•\d\.\)]\s*", "", cleaned)
+
+        # Remove common conversational / question stems (longer phrases first)
+        stems = [
+            r"^(?:can\s+you\s+)?(?:could\s+you\s+)?(?:please\s+)?(?:explain|describe|define)\s+(?:to\s+me\s+)?(?:about\s+)?(?:what\s+is\s+(?:an?|the)?\s*)?",
+            r"^(?:tell|teach)\s+me\s+about\s+",
+            r"^(?:i\s+want\s+to\s+(?:learn|know)\s+(?:about\s+)?)",
+            r"^(?:give\s+me\s+an?\s+overview\s+of\s+)",
+            r"^(?:give\s+an?\s+overview\s+of\s+)",
+            r"^(?:what\s+is\s+(?:an?|the)?\s*)",
+            r"^(?:what\s+are\s+(?:the)?\s*)",
+            r"^(?:how\s+(?:does|do|can|to)\s+(?:an?|the)?\s*)",
+            r"^(?:why\s+(?:is|are|does|do)\s+(?:an?|the)?\s*)",
+            r"^(?:what\s+do\s+you\s+mean\s+by\s+)",
+        ]
+        for pattern in stems:
+            cleaned = re.sub(pattern, "", cleaned, flags=re.IGNORECASE).strip()
+
+        # Strip remaining punctuation from ends: quotes, periods, questions, dashes
+        cleaned = cleaned.strip(" \t\n\r?!.—:\"'`*")
+        cleaned = re.sub(r"\s{2,}", " ", cleaned).strip()
+
+        if len(cleaned) > 60:
+            cleaned = cleaned[:60].rsplit(" ", 1)[0].strip(" \t\n\r?!.—:\"'`*")
+
+        if not cleaned:
+            return "General"
+
+        # Clean capitalization: ensure leading letter is uppercase while preserving acronyms/casing
+        return cleaned[0].upper() + cleaned[1:]
+
     def _topic(self, text: str) -> str:
         """Extract a short topic string from the full assembled prompt.
 
@@ -125,25 +176,23 @@ class DemoLLMClient:
         # 1) Explicit "Topic: X" line
         topic = self._prefix_value(lines, "topic:")
         if topic:
-            return topic[:60]
+            return self._sanitize_topic(topic)
         # 2) The student-message body (line after "Student message:")
         body = self._student_message(text)
         if body:
-            return body[:60]
+            return self._sanitize_topic(body)
         # 3) "Weak concepts:" line value (recommendation context) — the value is
         #    "none" / "none identified" when there are no weak areas, so any
         #    value starting with "none" must be treated as absent.
         weak = self._prefix_value(lines, "weak concepts:")
         if weak and not weak.lower().startswith("none"):
-            return weak.split(",")[0].strip()[:60]
+            return self._sanitize_topic(weak.split(",")[0])
         # 4) Fallback: last non-trivial line
         if not lines:
-            return "general"
+            return "General"
         candidate = lines[-1].strip("\"' —:-")
         candidate = re.sub(r"\s{2,}", " ", candidate)
-        if len(candidate) > 60:
-            candidate = candidate[:60].rsplit(" ", 1)[0]
-        return candidate or "general"
+        return self._sanitize_topic(candidate)
 
     def _intent(self, user: str) -> ChatIntent:
         message = (self._student_message(user) or user).lower()
@@ -166,7 +215,7 @@ class DemoLLMClient:
         }
 
     def _demoexplanation(self, user: str) -> dict:
-        topic = self._topic(user)
+        topic = self._topic(user).rstrip(".?! ")
         return {
             "topic": topic,
             "summary": f"A friendly overview of {topic}.",
@@ -189,7 +238,7 @@ class DemoLLMClient:
         }
 
     def _demoquiz(self, user: str) -> dict:
-        topic = self._topic(user)
+        topic = self._topic(user).rstrip(".?! ")
         questions: list[dict] = []
         qindex = 0
 
@@ -286,7 +335,7 @@ class DemoLLMClient:
         }
 
     def _demorecommendation(self, user: str) -> dict:
-        topic = self._topic(user)
+        topic = self._topic(user).rstrip(".?! ")
         return {
             "next_topic": f"A practical application of {topic}",
             "rationale": (

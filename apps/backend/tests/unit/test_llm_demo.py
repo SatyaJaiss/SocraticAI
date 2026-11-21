@@ -72,9 +72,22 @@ class TestTopicExtraction:
         text = "Topic: Photosynthesis\nRequested difficulty: beginner\nStudent level: beginner"
         assert client._topic(text) == "Photosynthesis"
 
+    def test_explicit_topic_line_with_question_stem(self, client):
+        text = "Topic: what is gateway?\nRequested difficulty: beginner"
+        assert client._topic(text) == "Gateway"
+
     def test_student_message_body(self, client):
         text = "Student message:\nHow do rockets work?"
-        assert client._topic(text) == "How do rockets work?"
+        assert client._topic(text) == "Rockets work"
+
+    def test_student_message_question_stems(self, client):
+        assert client._topic("Student message:\nwhat is gateway?") == "Gateway"
+        assert client._topic("Student message:\nWhat is photosynthesis?") == "Photosynthesis"
+        assert client._topic("Student message:\nTell me about machine learning") == "Machine learning"
+
+    def test_memory_tag_cleaning(self, client):
+        text = "- (conversation_summary) what is gateway?"
+        assert client._topic(text) == "Gateway"
 
     def test_weak_concepts_line(self, client):
         text = "Weak concepts: Algebra, Fractions\nNext: whatever"
@@ -83,11 +96,11 @@ class TestTopicExtraction:
     def test_fallback_last_line(self, client):
         assert (
             client._topic("just some text about mitochondria")
-            == "just some text about mitochondria"
+            == "Just some text about mitochondria"
         )
 
     def test_empty(self, client):
-        assert client._topic("") == "general"
+        assert client._topic("") == "General"
 
 
 class TestExplanation:

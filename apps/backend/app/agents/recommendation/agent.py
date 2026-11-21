@@ -56,7 +56,9 @@ class RecommendationAgent:
                     + "\n\n"
                 )
 
+        current_topic = (state.get("topic") or "General Studies").strip()
         user_prompt = (
+            f"Topic: {current_topic}\n\n"
             f"{profile_prompt_section(profile)}\n\n"
             f"{prereq_section}"
             f"Concept scores:\n{score_lines}\n\n"
@@ -92,16 +94,8 @@ class RecommendationAgent:
     # ------------------------------------------------------------ helpers --
     @staticmethod
     def _format_message(rec: Recommendation) -> str:
-        lines = [f"### Recommended next step: {rec.next_topic}", rec.rationale]
-        if rec.revision_schedule:
-            lines += ["", "**Revision schedule:**"]
-            lines += [f"- {item}" for item in rec.revision_schedule]
-        if rec.daily_plan:
-            lines += ["", "**Daily plan:**"]
-            lines += [f"- {item}" for item in rec.daily_plan]
-        if rec.suggested_quiz_topics:
-            lines += [
-                "",
-                f"**Suggested quiz topics:** {', '.join(rec.suggested_quiz_topics)}",
-            ]
-        return "\n".join(lines)
+        """Render a concise pointer in chat — full plan is viewed on the Learning Dashboard."""
+        return (
+            f"💡 **Recommended next step:** {rec.next_topic}. "
+            f"View your full study plan on the **Learning Dashboard**."
+        )

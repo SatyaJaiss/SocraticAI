@@ -65,25 +65,16 @@ class QuizAgent:
     # ------------------------------------------------------------ helpers --
     @staticmethod
     def _format_message(quiz: Quiz) -> str:
-        """Render the quiz for the student (answers never shown)."""
-        lines = [
-            f"### Quiz: {quiz.topic}",
-            f"Difficulty: {quiz.difficulty.value} · {len(quiz.questions)} questions",
-            "",
-        ]
-        for idx, q in enumerate(quiz.questions, start=1):
-            lines.append(f"**Q{idx}.** {q.question}")
-            if q.type == QuestionType.MCQ and q.options:
-                for opt_idx, option in enumerate(q.options):
-                    letter = chr(ord("A") + opt_idx)
-                    lines.append(f"  - {letter}) {option}")
-            elif q.type == QuestionType.NUMERICAL:
-                lines.append("  - (enter a numeric answer)")
-            else:
-                lines.append("  - (answer in your own words)")
-            lines.append("")
-        lines.append(
-            "Type your answers or submit them in the quiz tab — I'll mark them and "
-            "show your weak points."
+        """Render a concise, friendly notification for chat (full quiz is in the Quiz tab)."""
+        count = len(quiz.questions)
+        article = "an" if str(count).startswith(("8", "11", "18")) else "a"
+        difficulty_label = (
+            quiz.difficulty.value
+            if hasattr(quiz.difficulty, "value")
+            else str(quiz.difficulty)
         )
-        return "\n".join(lines)
+        return (
+            f"📝 I've prepared {article} **{count}-question practice quiz** on **{quiz.topic}** "
+            f"({difficulty_label} level).\n\n"
+            f"Head over to the **Practice Quiz** tab to test your knowledge!"
+        )
