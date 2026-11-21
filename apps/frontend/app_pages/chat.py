@@ -12,7 +12,9 @@ if str(root_dir) not in sys.path:
 
 import streamlit as st
 from apps.frontend.services.api_client import SocraticAIClientError
-from apps.frontend.utils.state import get_client, set_quiz_in_state, student_id
+from apps.frontend.utils.state import ensure_authenticated, get_client, set_quiz_in_state, student_id
+
+ensure_authenticated()
 
 st.header("AI Tutor", icon=":material/chat:")
 

@@ -13,7 +13,9 @@ if str(root_dir) not in sys.path:
 import pandas as pd
 import streamlit as st
 from apps.frontend.services.api_client import SocraticAIClientError
-from apps.frontend.utils.state import get_client, student_id
+from apps.frontend.utils.state import ensure_authenticated, get_client, student_id
+
+ensure_authenticated()
 
 st.header("Learning Dashboard", icon=":material/analytics:")
 
