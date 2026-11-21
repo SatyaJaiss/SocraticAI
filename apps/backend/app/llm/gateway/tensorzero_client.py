@@ -165,32 +165,52 @@ class TensorZeroGatewayClient:
         episode_id: str | None = None,
     ) -> T:
         """Generate structured JSON via TensorZero gateway or fallback, validating with Pydantic."""
-        if not self.settings.enabled or not self._gateway_initialized or self._gateway is None:
-            if self.fallback_client is not None:
-                return await self.fallback_client.generate_json(
-                    system, user, model_class=model_class, temperature=temperature
-                )
-
         func = function_name or self.settings.default_json_function
-        text = await self.generate(
-            system=system,
-            user=user,
-            temperature=temperature,
-            function_name=func,
-            variant_name=variant_name,
-            episode_id=episode_id,
-        )
-        payload = safe_json_parse(text)
-        if payload is None:
-            raise LLMOutputParsingError(
-                f"Model did not return parseable JSON. First 200 chars: {text[:200]!r}"
+        variant = variant_name or self.settings.default_variant
+
+        # 1. Attempt structured generation through TensorZero gateway if operational
+        if self.settings.enabled and self._gateway_initialized and self._gateway is not None:
+            try:
+                res = await self._call_gateway_inference(
+                    system=system,
+                    user=user,
+                    function_name=func,
+                    variant_name=variant,
+                    episode_id=episode_id,
+                )
+                payload = safe_json_parse(res.text)
+                if payload is not None:
+                    try:
+                        return model_class.model_validate(payload)
+                    except ValidationError as val_err:
+                        logger.warning(
+                            "TensorZero gateway output failed %s validation (%s); falling back.",
+                            model_class.__name__,
+                            val_err,
+                        )
+                else:
+                    logger.warning(
+                        "TensorZero gateway output was not parseable JSON; falling back."
+                    )
+            except Exception as exc:
+                logger.warning(
+                    "TensorZero gateway JSON call failed (%s); triggering resilient fallback.",
+                    exc,
+                )
+                record_llm_failure(provider="tensorzero", error_type=type(exc).__name__)
+                record_llm_fallback(reason=f"tensorzero_json_error_{type(exc).__name__}")
+
+        # 2. Resilient fallback path directly to fallback client's generate_json
+        if self.fallback_client is not None:
+            logger.debug(
+                "Executing LLM JSON inference via fallback client (%s)",
+                self.fallback_client.provider,
             )
-        try:
-            return model_class.model_validate(payload)
-        except ValidationError as exc:
-            raise LLMOutputParsingError(
-                f"Model JSON failed {model_class.__name__} validation: {exc}"
-            ) from exc
+            return await self.fallback_client.generate_json(
+                system, user, model_class=model_class, temperature=temperature
+            )
+
+        raise LLMError("Neither TensorZero gateway nor fallback client is operational for JSON generation.")
 
     async def _call_gateway_inference(
         self,
